@@ -4,12 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="apple-touch-icon" href="icon-192.png">
-
 <title>Recibo Construye Más V2</title>
 
 <style>
@@ -30,7 +24,7 @@ body{
 #splashScreen{
   position:fixed;
   inset:0;
-  background:url('assets/img/splash.png') center/cover no-repeat;
+  background:url('/assets/img/splash.png') center/cover no-repeat;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -48,14 +42,8 @@ body{
 }
 
 @keyframes logoFade{
-  0%{
-    opacity:0;
-    transform:scale(0.9);
-  }
-  100%{
-    opacity:1;
-    transform:scale(1);
-  }
+  0%{ opacity:0; transform:scale(0.9); }
+  100%{ opacity:1; transform:scale(1); }
 }
 
 /* ===== PANTALLAS ===== */
@@ -185,15 +173,15 @@ body{
 
 <body>
 
-<!-- SPLASH CORREGIDO -->
+<!-- SPLASH -->
 <div id="splashScreen">
   <div class="logoSplash">
-    <img src="assets/img/logo2.png" alt="Construye Más">
+    <img src="/assets/img/logo2.png" alt="Construye Más">
   </div>
 </div>
 
 <!-- NOMBRE -->
-<div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
+<div class="screen active" id="screen-nombre" style="background-image:url('/assets/img/fondo_nombre.png');">
   <div class="overlay"></div>
   <div class="content">
     <div class="form-center">
@@ -203,7 +191,7 @@ body{
       <div class="slider-track">
         <div class="slider-fill"></div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="/assets/img/logo.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -211,7 +199,7 @@ body{
 </div>
 
 <!-- CONCEPTO -->
-<div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
+<div class="screen" id="screen-concepto" style="background-image:url('/assets/img/fondo_concepto.png');">
   <div class="overlay"></div>
   <div class="content">
     <div class="form-center">
@@ -221,7 +209,7 @@ body{
       <div class="slider-track">
         <div class="slider-fill"></div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="/assets/img/logo.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -229,7 +217,7 @@ body{
 </div>
 
 <!-- MONTO -->
-<div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
+<div class="screen" id="screen-monto" style="background-image:url('/assets/img/fondo_monto.png');">
   <div class="overlay"></div>
   <div class="content">
     <div class="form-center">
@@ -239,7 +227,7 @@ body{
       <div class="slider-track">
         <div class="slider-fill"></div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="/assets/img/logo.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -247,7 +235,7 @@ body{
 </div>
 
 <!-- EMITIR -->
-<div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
+<div class="screen" id="screen-emitir" style="background-image:url('/assets/img/fondo_emitir.png');">
   <div class="overlay"></div>
   <div class="content">
     <div class="form-center"></div>
@@ -255,7 +243,7 @@ body{
       <div class="slider-track">
         <div class="slider-fill"></div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="/assets/img/logo.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -263,7 +251,7 @@ body{
 </div>
 
 <!-- CONFIRMACION -->
-<div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
+<div class="screen" id="screen-confirmacion" style="background-image:url('/assets/img/fondo_confirmacion.png');">
   <div class="overlay"></div>
   <div class="content">
     <div class="form-center">
@@ -274,7 +262,7 @@ body{
         <div class="slider-fill"></div>
         <div class="slider-text">Hasta luego</div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="/assets/img/logo.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -301,7 +289,6 @@ function goTo(nextScreen){
 
 function nextScreen(){
   if(isTransitioning) return;
-
   isTransitioning = true;
   currentIndex = (currentIndex + 1) % screens.length;
   goTo(screens[currentIndex]);
@@ -311,7 +298,6 @@ function nextScreen(){
   },2500);
 }
 
-/* SPLASH CON DURACIÓN REAL */
 document.addEventListener("DOMContentLoaded", function(){
   setTimeout(()=>{
       const splash = document.getElementById("splashScreen");
@@ -324,7 +310,6 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 document.querySelectorAll(".slider-thumb").forEach(thumb=>{
-
   const track = thumb.parentElement;
   const fill = track.querySelector(".slider-fill");
 
@@ -339,33 +324,24 @@ document.querySelectorAll(".slider-thumb").forEach(thumb=>{
 
   thumb.addEventListener("touchmove",(e)=>{
     if(!dragging) return;
-
     const maxMove = track.offsetWidth - thumb.offsetWidth;
-    currentX = e.touches[0].clientX - startX;
-
-    currentX = Math.max(0, Math.min(currentX, maxMove));
-
+    currentX = Math.max(0, Math.min(e.touches[0].clientX - startX, maxMove));
     thumb.style.left = currentX + "px";
     fill.style.width = (currentX / maxMove) * 100 + "%";
   });
 
   thumb.addEventListener("touchend",()=>{
-
     const maxMove = track.offsetWidth - thumb.offsetWidth;
 
     if(currentX > maxMove * 0.85){
-
       thumb.style.left = maxMove + "px";
       fill.style.width = "100%";
-
       nextScreen();
-
       setTimeout(()=>{
         thumb.style.left = "0px";
         fill.style.width = "0%";
       },2500);
-
-    }else{
+    } else {
       thumb.style.left = "0px";
       fill.style.width = "0%";
     }
