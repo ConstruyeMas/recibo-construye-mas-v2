@@ -11,7 +11,9 @@
 <link rel="apple-touch-icon" href="assets/img/icon-180.png">
 
 <title>Recibo Construye Más V2</title>
-    <style>
+
+<style>
+
 /* Quitar fondo amarillo autofill iOS */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -192,6 +194,27 @@ body {
     font-size: 15px;
 }
 
+/* ===== MENSAJE CONFIRMACION ===== */
+
+.mensaje-confirmacion {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.linea1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: white;
+}
+
+.linea2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+}
+
 </style>
 </head>
 
@@ -280,7 +303,10 @@ body {
     <div class="overlay"></div>
     <div class="content">
         <div class="form-center">
-            <h2 style="color:black;">Comprobante emitido Ing. Campos</h2>
+            <div class="mensaje-confirmacion">
+                <div class="linea1">Comprobante Emitido</div>
+                <div class="linea2">Ing. Campos</div>
+            </div>
         </div>
         <div class="slider-container">
             <div class="slider-track">
