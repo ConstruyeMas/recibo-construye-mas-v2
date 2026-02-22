@@ -69,14 +69,12 @@ body{
   flex-direction:column;
   background-size:cover;
   background-position:center;
-
   opacity:0;
   transform:translateY(20px);
   pointer-events:none;
-
   transition:
-  opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-  transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .screen.active{
@@ -105,10 +103,12 @@ body{
   flex-direction:column;
 }
 
-.content h2{
-  margin-top:60px;
-  text-align:center;
-  color:white;
+/* CENTRADO REAL DEL FORM */
+.form-center{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .input-premium{
@@ -120,7 +120,6 @@ body{
   backdrop-filter:blur(10px);
   color:white;
   font-size:18px;
-  margin-top:20px;
   outline:none;
 }
 
@@ -156,8 +155,8 @@ body{
 
 .slider-thumb::after{
   content:"";
-  width:80px;
-  height:80px;
+  width:60px;
+  height:60px;
   background:url('assets/img/icon-192.png') center/cover no-repeat;
 }
 
@@ -184,72 +183,92 @@ body{
   </div>
 </div>
 
+<!-- NOMBRE -->
 <div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
   <div class="overlay"></div>
   <div class="content">
-    <div>
+
+    <div class="form-center">
       <input type="text" class="input-premium" placeholder="Nombre completo">
     </div>
+
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-thumb"></div>
       </div>
     </div>
+
   </div>
 </div>
 
+<!-- CONCEPTO -->
 <div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
   <div class="overlay"></div>
   <div class="content">
-    <div>
+
+    <div class="form-center">
       <input type="text" class="input-premium" placeholder="Nombre de la obra">
     </div>
+
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-thumb"></div>
       </div>
     </div>
+
   </div>
 </div>
 
+<!-- MONTO -->
 <div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
   <div class="overlay"></div>
   <div class="content">
-    <div>
+
+    <div class="form-center">
       <input type="number" class="input-premium" placeholder="$ 0.00">
     </div>
+
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-thumb"></div>
       </div>
     </div>
+
   </div>
 </div>
 
+<!-- EMITIR -->
 <div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
   <div class="overlay"></div>
   <div class="content">
-    <div></div>
+
+    <div class="form-center"></div>
+
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-thumb"></div>
       </div>
     </div>
+
   </div>
 </div>
 
+<!-- CONFIRMACION -->
 <div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
   <div class="overlay"></div>
   <div class="content">
-    <div>
-      <h2>Listo Ing. Campos</h2>
+
+    <div class="form-center">
+      <h2 style="color:white;">Listo Ing. Campos</h2>
     </div>
+
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-text">Hasta luego</div>
         <div class="slider-thumb"></div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -345,13 +364,6 @@ document.querySelectorAll(".slider-thumb").forEach(thumb => {
   });
 
 });
-
-/* SERVICE WORKER DESACTIVADO TEMPORALMENTE */
-/*
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker-v2.js");
-}
-*/
 
 </script>
 
