@@ -1,110 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Recibo Construye Más V2</title>
+
+<style>
+
+/* RESET */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+
+body{
+  overflow:hidden;
+  background:#000;
+}
+
+/* SPLASH */
+#splashScreen{
+  position:fixed;
+  inset:0;
+  background:url('assets/img/splash.png') center/cover no-repeat;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.logoSplash img{
+  width:260px;
+}
+
+/* PANTALLAS */
+.screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  background-size:cover;
+  background-position:center;
+
+  opacity:0;
+  transform:translateY(30px);
+  pointer-events:none;
+
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.screen.active{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+}
+
+.content{
+  position:relative;
+  z-index:2;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.form-center{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.input-premium{
+  width:100%;
+  max-width:400px;
+  padding:18px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  color:white;
+  font-size:18px;
+  outline:none;
+}
+
+.slider-container{
+  padding:40px 20px;
+}
+
+.slider-track{
+  width:100%;
+  max-width:400px;
+  height:80px;
+  margin:0 auto;
+  background:rgba(255,255,255,0.15);
+  border-radius:60px;
+  position:relative;
+  overflow:hidden;
+}
+
+.slider-thumb{
+  width:80px;
+  height:80px;
+  position:absolute;
+  left:0;
+  top:0;
+  background:#fff;
+  border-radius:50%;
+  transition:left 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.slider-thumb::after{
+  content:"";
+  width:40px;
+  height:40px;
+  background:url('assets/img/icon-192.png') center/contain no-repeat;
+}
+
+.slider-text{
+  position:absolute;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splashScreen">
+  <div class="logoSplash">
+    <img src="assets/img/logo.png">
+  </div>
+</div>
+
+<!-- NOMBRE -->
+<div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="form-center">
+      <input type="text" class="input-premium" placeholder="Nombre completo">
+    </div>
+    <div class="slider-container">
+      <div class="slider-track">
+        <div class="slider-thumb"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPTO -->
+<div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="form-center">
+      <input type="text" class="input-premium" placeholder="Nombre del proyecto">
+    </div>
+    <div class="slider-container">
+      <div class="slider-track">
+        <div class="slider-thumb"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 
 let currentIndex = 0;
 let isTransitioning = false;
 
-const screens = [
-  "screen-nombre",
-  "screen-concepto",
-  "screen-monto",
-  "screen-emitir",
-  "screen-confirmacion"
-];
+const screens = ["screen-nombre","screen-concepto"];
 
-function goTo(nextScreen){
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(nextScreen).classList.add("active");
+function goTo(next){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(next).classList.add("active");
 }
 
 function nextScreen(){
-
   if(isTransitioning) return;
 
   isTransitioning = true;
 
-  if(currentIndex < screens.length - 1){
-    currentIndex++;
-  } else {
-    currentIndex = 0;
-  }
-
+  currentIndex = (currentIndex + 1) % screens.length;
   goTo(screens[currentIndex]);
 
   setTimeout(()=>{
     isTransitioning = false;
-  },600);
-
+  },1000);
 }
 
-/* SPLASH */
+/* SPLASH SEGURO */
 document.addEventListener("DOMContentLoaded", function(){
-
   setTimeout(()=>{
-      const splash = document.getElementById("splashScreen");
-      if(splash){
-        splash.style.transition = "opacity 0.6s ease";
-        splash.style.opacity = "0";
-        setTimeout(()=> splash.remove(),600);
-      }
-  },3000);
-
+    const splash = document.getElementById("splashScreen");
+    splash.style.transition="opacity 1s ease";
+    splash.style.opacity="0";
+    setTimeout(()=> splash.remove(),1000);
+  },3500);
 });
 
-/* SLIDER TOUCH */
-document.querySelectorAll(".slider-thumb").forEach(thumb => {
+/* SLIDER */
+document.querySelectorAll(".slider-thumb").forEach(thumb=>{
 
-  let startX = 0;
-  let currentX = 0;
-  let isDragging = false;
+  let startX=0;
+  let currentX=0;
+  let dragging=false;
 
-  const track = thumb.parentElement;
+  const track=thumb.parentElement;
 
-  thumb.addEventListener("touchstart", (e)=>{
-    isDragging = true;
-    startX = e.touches[0].clientX;
+  thumb.addEventListener("touchstart",(e)=>{
+    dragging=true;
+    startX=e.touches[0].clientX;
   });
 
-  thumb.addEventListener("touchmove", (e)=>{
-    if(!isDragging) return;
+  thumb.addEventListener("touchmove",(e)=>{
+    if(!dragging) return;
 
-    const maxMove = track.offsetWidth - thumb.offsetWidth;
-    currentX = e.touches[0].clientX - startX;
+    const maxMove=track.offsetWidth-thumb.offsetWidth;
+    currentX=e.touches[0].clientX-startX;
 
-    if(currentX < 0) currentX = 0;
-    if(currentX > maxMove) currentX = maxMove;
+    if(currentX<0) currentX=0;
+    if(currentX>maxMove) currentX=maxMove;
 
-    thumb.style.left = currentX + "px";
+    thumb.style.left=currentX+"px";
   });
 
-  thumb.addEventListener("touchend", ()=>{
+  thumb.addEventListener("touchend",()=>{
+    const maxMove=track.offsetWidth-thumb.offsetWidth;
 
-    const maxMove = track.offsetWidth - thumb.offsetWidth;
-
-    if(currentX > maxMove * 0.8 && !isTransitioning){
-
-      thumb.style.left = maxMove + "px";
-
+    if(currentX>maxMove*0.8){
+      thumb.style.left=maxMove+"px";
       setTimeout(()=>{
         nextScreen();
-        thumb.style.left = "0px";
+        thumb.style.left="0px";
       },200);
-
-    } else {
-      thumb.style.left = "0px";
+    }else{
+      thumb.style.left="0px";
     }
 
-    isDragging = false;
-    currentX = 0;
-
+    dragging=false;
+    currentX=0;
   });
 
 });
 
-/* ⚠ TEMPORAL: DESACTIVAMOS SERVICE WORKER PARA EVITAR CONFLICTOS */
-/*
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker-v2.js");
-}
-*/
-
 </script>
+
+</body>
+</html>
