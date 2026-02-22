@@ -2,13 +2,15 @@
 <html lang="es">
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="Construye Más">
+<link rel="apple-touch-icon" href="assets/img/icon-180.png">
 
-    <title>Recibo Construye Más V2</title>
+<title>Recibo Construye Más V2</title>
 
 <style>
 
@@ -20,8 +22,16 @@
     font-family: Arial, sans-serif;
 }
 
+/* FULLSCREEN FIX */
+html, body {
+    height: 100%;
+    background: #000;
+}
+
 body {
     overflow: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ===== SPLASH CINEMÁTICO ===== */
@@ -47,14 +57,8 @@ body {
 }
 
 @keyframes logoFade {
-    0% {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 /* ===== PANTALLAS ===== */
@@ -62,6 +66,7 @@ body {
 .screen {
     position: fixed;
     inset: 0;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -146,8 +151,6 @@ body {
     border-radius: 50px;
     transition: width 0.3s ease;
 }
-
-/* Marco tipo Canva */
 
 .slider-thumb {
     width: 60px;
@@ -284,8 +287,6 @@ body {
 
 <script>
 
-/* JS intacto */
-
 let currentIndex = 0;
 let isTransitioning = false;
 
@@ -309,9 +310,7 @@ function nextScreen(){
     currentIndex = (currentIndex + 1) % screens.length;
     goTo(screens[currentIndex]);
 
-    setTimeout(()=>{
-        isTransitioning = false;
-    },2500);
+    setTimeout(()=>{ isTransitioning = false; },2500);
 }
 
 document.addEventListener("DOMContentLoaded", function(){
