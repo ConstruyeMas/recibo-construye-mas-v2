@@ -85,11 +85,6 @@ body{
   pointer-events:auto;
 }
 
-.screen.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
 .overlay{
   position:absolute;
   width:100%;
@@ -166,6 +161,7 @@ body{
   height:80px;
   background:url('assets/img/icon-192.png') center/cover no-repeat;
 }
+
 .slider-text{
   position:absolute;
   width:100%;
@@ -183,38 +179,32 @@ body{
 
 <body>
 
-<!-- SPLASH -->
 <div id="splashScreen">
   <div class="logoSplash">
     <img src="assets/img/logo.png" alt="Construye Más">
   </div>
 </div>
 
-<!-- NOMBRE -->
 <div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
   <div class="overlay"></div>
   <div class="content">
     <div>
       <input type="text" class="input-premium" placeholder="Nombre completo">
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
-        
         <div class="slider-thumb"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CONCEPTO -->
 <div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
   <div class="overlay"></div>
   <div class="content">
     <div>
       <input type="text" class="input-premium" placeholder="Nombre de la obra">
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-thumb"></div>
@@ -223,14 +213,12 @@ body{
   </div>
 </div>
 
-<!-- MONTO -->
 <div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
   <div class="overlay"></div>
   <div class="content">
     <div>
       <input type="number" class="input-premium" placeholder="$ 0.00">
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-thumb"></div>
@@ -239,13 +227,10 @@ body{
   </div>
 </div>
 
-<!-- EMITIR -->
 <div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
   <div class="overlay"></div>
   <div class="content">
-    <div>
-    </div>
-
+    <div></div>
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-thumb"></div>
@@ -254,14 +239,12 @@ body{
   </div>
 </div>
 
-<!-- CONFIRMACION -->
 <div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
   <div class="overlay"></div>
   <div class="content">
     <div>
       <h2>Listo Ing. Campos</h2>
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-text">Hasta luego</div>
@@ -274,6 +257,7 @@ body{
 <script>
 
 let currentIndex = 0;
+let isTransitioning = false;
 
 const screens = [
   "screen-nombre",
@@ -304,14 +288,11 @@ function nextScreen(){
 
   setTimeout(()=>{
     isTransitioning = false;
-  },600); // debe coincidir con la duración CSS
+  },600);
 
 }
-}
 
-/* SPLASH ESTABLE */
 document.addEventListener("DOMContentLoaded", function(){
-
   setTimeout(()=>{
       const splash = document.getElementById("splashScreen");
       if(splash){
@@ -320,10 +301,8 @@ document.addEventListener("DOMContentLoaded", function(){
         setTimeout(()=> splash.remove(),600);
       }
   },3000);
-
 });
 
-/* SLIDER TOUCH */
 document.querySelectorAll(".slider-thumb").forEach(thumb => {
 
   let startX = 0;
@@ -352,7 +331,7 @@ document.querySelectorAll(".slider-thumb").forEach(thumb => {
   thumb.addEventListener("touchend", ()=>{
     const maxMove = track.offsetWidth - thumb.offsetWidth;
 
-    if(currentX > maxMove * 0.8){
+    if(currentX > maxMove * 0.8 && !isTransitioning){
       thumb.style.left = maxMove + "px";
       setTimeout(()=>{
         nextScreen();
@@ -368,10 +347,12 @@ document.querySelectorAll(".slider-thumb").forEach(thumb => {
 
 });
 
-/* SERVICE WORKER */
+/* SERVICE WORKER DESACTIVADO TEMPORALMENTE */
+/*
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker-v2.js");
 }
+*/
 
 </script>
 
