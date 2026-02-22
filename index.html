@@ -289,13 +289,24 @@ function goTo(nextScreen){
 }
 
 function nextScreen(){
+
+  if(isTransitioning) return;
+
+  isTransitioning = true;
+
   if(currentIndex < screens.length - 1){
     currentIndex++;
-    goTo(screens[currentIndex]);
   } else {
     currentIndex = 0;
-    goTo(screens[currentIndex]);
   }
+
+  goTo(screens[currentIndex]);
+
+  setTimeout(()=>{
+    isTransitioning = false;
+  },600); // debe coincidir con la duración CSS
+
+}
 }
 
 /* SPLASH ESTABLE */
