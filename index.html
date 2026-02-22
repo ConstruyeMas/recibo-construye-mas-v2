@@ -135,27 +135,26 @@ body{
   transition: width 0.3s ease;
 }
 
+/* 🔥 MARCO TIPO CANVA */
 .slider-thumb{
   width:60px;
   height:60px;
   position:absolute;
   left:0;
   top:0;
-  background:rgba(255,255,255,0.08); /* mucho más transparente */
   border-radius:50%;
+  overflow:hidden;                 /* máscara circular */
   display:flex;
   align-items:center;
   justify-content:center;
   transition:left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  backdrop-filter:blur(14px);
-  overflow:hidden;
 }
 
+/* 🔥 La imagen llena el círculo */
 .slider-thumb img{
-  width:42px;
-  height:42px;
-  object-fit:contain;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+  width:100%;
+  height:100%;
+  object-fit:cover;                /* efecto Canva */
 }
 
 .slider-text{
@@ -210,7 +209,7 @@ body{
       <div class="slider-track">
         <div class="slider-fill"></div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="assets/img/icon-slide.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -228,7 +227,7 @@ body{
       <div class="slider-track">
         <div class="slider-fill"></div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="assets/img/icon-slide.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -243,9 +242,9 @@ body{
     <div class="slider-container">
       <div class="slider-track">
         <div class="slider-fill"></div>
-        <div class="slider-text;">Emitir comprobante</div>
+        <div class="slider-text">Emitir comprobante</div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="assets/img/icon-slide.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -264,7 +263,7 @@ body{
         <div class="slider-fill"></div>
         <div class="slider-text">Hasta luego</div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="assets/img/icon-slide.png" alt="Logo">
         </div>
       </div>
     </div>
@@ -272,6 +271,8 @@ body{
 </div>
 
 <script>
+
+/* tu JS intacto */
 
 let currentIndex = 0;
 let isTransitioning = false;
