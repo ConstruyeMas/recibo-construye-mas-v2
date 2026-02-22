@@ -73,8 +73,8 @@ body{
   transform:translateY(20px);
   pointer-events:none;
   transition:
-    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 2.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .screen.active{
@@ -103,7 +103,6 @@ body{
   flex-direction:column;
 }
 
-/* CENTRADO REAL DEL FORM */
 .form-center{
   flex:1;
   display:flex;
@@ -123,41 +122,53 @@ body{
   outline:none;
 }
 
-/* ===== SLIDER ===== */
+/* ===== SLIDER PREMIUM ===== */
+
 .slider-container{
   width:100%;
-  margin-bottom:40px;
+  margin-bottom:35px;
 }
 
 .slider-track{
-  width:85%;
-  height:80px;
+  width:75%;
+  height:60px;
   margin:0 auto;
   background:rgba(255,255,255,0.15);
-  border-radius:60px;
+  border-radius:50px;
   position:relative;
   overflow:hidden;
 }
 
-.slider-thumb{
-  width:80px;
-  height:80px;
+.slider-fill{
   position:absolute;
   left:0;
   top:0;
-  transition:left 0.1s ease;
-  background:#ffffff;
+  height:100%;
+  width:0%;
+  background:rgba(255,255,255,0.25);
+  border-radius:50px;
+  transition: width 0.2s ease;
+}
+
+.slider-thumb{
+  width:60px;
+  height:60px;
+  position:absolute;
+  left:0;
+  top:0;
+  background:rgba(255,255,255,0.95);
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
+  transition:left 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .slider-thumb::after{
   content:"";
-  width:60px;
-  height:60px;
-  background:url('assets/img/icon-192.png') center/cover no-repeat;
+  width:28px;
+  height:28px;
+  background:url('assets/img/icon-192.png') center/contain no-repeat;
 }
 
 .slider-text{
@@ -187,17 +198,15 @@ body{
 <div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
   <div class="overlay"></div>
   <div class="content">
-
     <div class="form-center">
       <input type="text" class="input-premium" placeholder="Nombre completo">
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
+        <div class="slider-fill"></div>
         <div class="slider-thumb"></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -205,17 +214,15 @@ body{
 <div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
   <div class="overlay"></div>
   <div class="content">
-
     <div class="form-center">
       <input type="text" class="input-premium" placeholder="Nombre de la obra">
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
+        <div class="slider-fill"></div>
         <div class="slider-thumb"></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -223,17 +230,15 @@ body{
 <div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
   <div class="overlay"></div>
   <div class="content">
-
     <div class="form-center">
       <input type="number" class="input-premium" placeholder="$ 0.00">
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
+        <div class="slider-fill"></div>
         <div class="slider-thumb"></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -241,15 +246,13 @@ body{
 <div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
   <div class="overlay"></div>
   <div class="content">
-
     <div class="form-center"></div>
-
     <div class="slider-container">
       <div class="slider-track">
+        <div class="slider-fill"></div>
         <div class="slider-thumb"></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -257,18 +260,16 @@ body{
 <div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
   <div class="overlay"></div>
   <div class="content">
-
     <div class="form-center">
       <h2 style="color:white;">Listo Ing. Campos</h2>
     </div>
-
     <div class="slider-container">
       <div class="slider-track">
+        <div class="slider-fill"></div>
         <div class="slider-text">Hasta luego</div>
         <div class="slider-thumb"></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -306,7 +307,7 @@ function nextScreen(){
 
   setTimeout(()=>{
     isTransitioning = false;
-  },600);
+  },2500);
 
 }
 
@@ -321,21 +322,22 @@ document.addEventListener("DOMContentLoaded", function(){
   },3000);
 });
 
-document.querySelectorAll(".slider-thumb").forEach(thumb => {
+document.querySelectorAll(".slider-thumb").forEach(thumb=>{
+
+  const track = thumb.parentElement;
+  const fill = track.querySelector(".slider-fill");
 
   let startX = 0;
   let currentX = 0;
-  let isDragging = false;
+  let dragging = false;
 
-  const track = thumb.parentElement;
-
-  thumb.addEventListener("touchstart", (e)=>{
-    isDragging = true;
+  thumb.addEventListener("touchstart",(e)=>{
+    dragging = true;
     startX = e.touches[0].clientX;
   });
 
-  thumb.addEventListener("touchmove", (e)=>{
-    if(!isDragging) return;
+  thumb.addEventListener("touchmove",(e)=>{
+    if(!dragging) return;
 
     const maxMove = track.offsetWidth - thumb.offsetWidth;
     currentX = e.touches[0].clientX - startX;
@@ -344,22 +346,32 @@ document.querySelectorAll(".slider-thumb").forEach(thumb => {
     if(currentX > maxMove) currentX = maxMove;
 
     thumb.style.left = currentX + "px";
+
+    const percentage = (currentX / maxMove) * 100;
+    fill.style.width = percentage + "%";
   });
 
-  thumb.addEventListener("touchend", ()=>{
+  thumb.addEventListener("touchend",()=>{
+
     const maxMove = track.offsetWidth - thumb.offsetWidth;
 
-    if(currentX > maxMove * 0.8 && !isTransitioning){
+    if(currentX > maxMove * 0.85){
+
       thumb.style.left = maxMove + "px";
+      fill.style.width = "100%";
+
       setTimeout(()=>{
         nextScreen();
         thumb.style.left = "0px";
-      },200);
-    } else {
+        fill.style.width = "0%";
+      },250);
+
+    }else{
       thumb.style.left = "0px";
+      fill.style.width = "0%";
     }
 
-    isDragging = false;
+    dragging = false;
     currentX = 0;
   });
 
