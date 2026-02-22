@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Recibo Construye Más V2</title>
 
 <style>
+
+/* 🔥 OCUPAR TODA LA PANTALLA */
+html, body{
+  height:100%;
+  background:#000;
+}
+
+body{
+  margin:0;
+  overflow:hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
 /* RESET */
 *{
@@ -19,14 +35,13 @@
   font-family: Arial, sans-serif;
 }
 
-body{
-  overflow:hidden;
-}
-
-/* ===== SPLASH CINEMÁTICO ===== */
+/* ===== SPLASH ===== */
 #splashScreen{
   position:fixed;
-  inset:0;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
   background:url('assets/img/splash.png') center/cover no-repeat;
   display:flex;
   align-items:center;
@@ -52,7 +67,12 @@ body{
 /* ===== PANTALLAS ===== */
 .screen{
   position:fixed;
-  inset:0;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -109,7 +129,7 @@ body{
   outline:none;
 }
 
-/* ===== SLIDER PREMIUM SUAVE ===== */
+/* ===== SLIDER ===== */
 
 .slider-container{
   width:100%;
@@ -146,18 +166,17 @@ body{
   left:0;
   top:0;
   border-radius:50%;
-  overflow:hidden;                 /* máscara circular */
+  overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
   transition:left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* 🔥 La imagen llena el círculo */
 .slider-thumb img{
   width:100%;
   height:100%;
-  object-fit:cover;                /* efecto Canva */
+  object-fit:cover;
 }
 
 .slider-text{
@@ -175,191 +194,3 @@ body{
 </head>
 
 <body>
-
-<!-- SPLASH -->
-<div id="splashScreen">
-  <div class="logoSplash">
-    <img src="assets/img/logo.png" alt="Construye Más">
-  </div>
-</div>
-
-<!-- NOMBRE -->
-<div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
-  <div class="overlay"></div>
-  <div class="content">
-    <div class="form-center">
-      <input type="text" class="input-premium" placeholder="Nombre completo">
-    </div>
-    <div class="slider-container">
-      <div class="slider-track">
-        <div class="slider-fill"></div>
-        <div class="slider-thumb">
-          <img src="assets/img/icon-slide.png" alt="Logo">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CONCEPTO -->
-<div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
-  <div class="overlay"></div>
-  <div class="content">
-    <div class="form-center">
-      <input type="text" class="input-premium" placeholder="Nombre de la obra">
-    </div>
-    <div class="slider-container">
-      <div class="slider-track">
-        <div class="slider-fill"></div>
-        <div class="slider-thumb">
-          <img src="assets/img/icon-slide.png" alt="Logo">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MONTO -->
-<div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
-  <div class="overlay"></div>
-  <div class="content">
-    <div class="form-center">
-      <input type="number" class="input-premium" placeholder="$ 0.00">
-    </div>
-    <div class="slider-container">
-      <div class="slider-track">
-        <div class="slider-fill"></div>
-        <div class="slider-thumb">
-          <img src="assets/img/icon-slide.png" alt="Logo">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- EMITIR -->
-<div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
-  <div class="overlay"></div>
-  <div class="content">
-    <div class="form-center"></div>
-    <div class="slider-container">
-      <div class="slider-track">
-        <div class="slider-fill"></div>
-        <div class="slider-text">Emitir comprobante</div>
-        <div class="slider-thumb">
-          <img src="assets/img/icon-slide.png" alt="Logo">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CONFIRMACION -->
-<div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
-  <div class="overlay"></div>
-  <div class="content">
-    <div class="form-center">
-      <h2 style="color:black;">Comprobante emitido
-        Ing. Campos</h2>
-    </div>
-    <div class="slider-container">
-      <div class="slider-track">
-        <div class="slider-fill"></div>
-        <div class="slider-text">Hasta luego</div>
-        <div class="slider-thumb">
-          <img src="assets/img/icon-slide.png" alt="Logo">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-
-/* tu JS intacto */
-
-let currentIndex = 0;
-let isTransitioning = false;
-
-const screens = [
-  "screen-nombre",
-  "screen-concepto",
-  "screen-monto",
-  "screen-emitir",
-  "screen-confirmacion"
-];
-
-function goTo(nextScreen){
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(nextScreen).classList.add("active");
-}
-
-function nextScreen(){
-  if(isTransitioning) return;
-  isTransitioning = true;
-  currentIndex = (currentIndex + 1) % screens.length;
-  goTo(screens[currentIndex]);
-
-  setTimeout(()=>{
-    isTransitioning = false;
-  },2500);
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-  setTimeout(()=>{
-      const splash = document.getElementById("splashScreen");
-      if(splash){
-        splash.style.transition = "opacity 2.5s ease";
-        splash.style.opacity = "0";
-        setTimeout(()=> splash.remove(),2500);
-      }
-  },5000);
-});
-
-document.querySelectorAll(".slider-thumb").forEach(thumb=>{
-  const track = thumb.parentElement;
-  const fill = track.querySelector(".slider-fill");
-
-  let startX = 0;
-  let currentX = 0;
-  let dragging = false;
-
-  thumb.addEventListener("touchstart",(e)=>{
-    dragging = true;
-    startX = e.touches[0].clientX;
-  });
-
-  thumb.addEventListener("touchmove",(e)=>{
-    if(!dragging) return;
-    const maxMove = track.offsetWidth - thumb.offsetWidth;
-    currentX = Math.max(0, Math.min(e.touches[0].clientX - startX, maxMove));
-    thumb.style.left = currentX + "px";
-    fill.style.width = (currentX / maxMove) * 100 + "%";
-  });
-
-  thumb.addEventListener("touchend",()=>{
-    const maxMove = track.offsetWidth - thumb.offsetWidth;
-
-    if(currentX > maxMove * 0.85){
-      thumb.style.left = maxMove + "px";
-      fill.style.width = "100%";
-      nextScreen();
-      setTimeout(()=>{
-        thumb.style.left = "0px";
-        fill.style.width = "0%";
-      },2500);
-    } else {
-      thumb.style.left = "0px";
-      fill.style.width = "0%";
-    }
-
-    dragging = false;
-    currentX = 0;
-  });
-
-});
-
-</script>
-
-</body>
-</html>
