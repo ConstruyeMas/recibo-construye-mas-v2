@@ -69,9 +69,20 @@ body{
   flex-direction:column;
   background-size:cover;
   background-position:center;
+
   opacity:0;
+  transform:translateY(20px);
   pointer-events:none;
-  transition:opacity 0.45s ease;
+
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.screen.active{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
 }
 
 .screen.active{
