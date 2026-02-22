@@ -129,7 +129,7 @@ body{
   width:75%;
   height:60px;
   margin:0 auto;
-  background:rgba(255,255,255,0.05); /* casi transparente */
+  background:rgba(255,255,255,0.05);
   border-radius:50px;
   position:relative;
   overflow:hidden;
@@ -142,7 +142,7 @@ body{
   top:0;
   height:100%;
   width:0%;
-  background:rgba(255,255,255,0.08); /* tenue */
+  background:rgba(255,255,255,0.08);
   border-radius:50px;
   transition: width 0.3s ease;
 }
@@ -153,7 +153,7 @@ body{
   position:absolute;
   left:0;
   top:0;
-  background:rgba(255,255,255,0.15); /* muy tenue */
+  background:rgba(255,255,255,0.15);
   border-radius:50%;
   display:flex;
   align-items:center;
@@ -168,6 +168,7 @@ body{
   height:36px;
   object-fit:contain;
 }
+
 .slider-text{
   position:absolute;
   width:100%;
@@ -184,8 +185,9 @@ body{
 
 <body>
 
+<!-- SPLASH CORREGIDO -->
 <div id="splashScreen">
-  <div class="assets/img/logo2.png">
+  <div class="logoSplash">
     <img src="assets/img/logo2.png" alt="Construye Más">
   </div>
 </div>
@@ -301,9 +303,7 @@ function nextScreen(){
   if(isTransitioning) return;
 
   isTransitioning = true;
-
   currentIndex = (currentIndex + 1) % screens.length;
-
   goTo(screens[currentIndex]);
 
   setTimeout(()=>{
@@ -311,15 +311,16 @@ function nextScreen(){
   },2500);
 }
 
+/* SPLASH CON DURACIÓN REAL */
 document.addEventListener("DOMContentLoaded", function(){
   setTimeout(()=>{
       const splash = document.getElementById("splashScreen");
       if(splash){
-        splash.style.transition = "opacity 0.6s ease";
+        splash.style.transition = "opacity 2.5s ease";
         splash.style.opacity = "0";
-        setTimeout(()=> splash.remove(),600);
+        setTimeout(()=> splash.remove(),2500);
       }
-  },3000);
+  },6000);
 });
 
 document.querySelectorAll(".slider-thumb").forEach(thumb=>{
