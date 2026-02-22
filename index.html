@@ -141,20 +141,21 @@ body{
   position:absolute;
   left:0;
   top:0;
-  background:rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.08); /* mucho más transparente */
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  backdrop-filter:blur(12px);
+  transition:left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter:blur(14px);
   overflow:hidden;
 }
 
 .slider-thumb img{
-  width:36px;
-  height:36px;
+  width:42px;
+  height:42px;
   object-fit:contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
 }
 
 .slider-text{
@@ -191,7 +192,7 @@ body{
       <div class="slider-track">
         <div class="slider-fill"></div>
         <div class="slider-thumb">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="assets/img/icon-slide.png" alt="Logo">
         </div>
       </div>
     </div>
