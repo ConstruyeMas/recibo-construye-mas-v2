@@ -26,7 +26,7 @@ body{
   overflow:hidden;
 }
 
-/* ===== SPLASH ===== */
+/* ===== SPLASH CINEMÁTICO ===== */
 #splashScreen{
   position:fixed;
   inset:0;
@@ -35,27 +35,27 @@ body{
   align-items:center;
   justify-content:center;
   z-index:9999;
-  animation:bgCinematic 3.5s ease forwards;
 }
 
 .logoSplash{
   opacity:0;
-  transform:translateY(25px);
-  animation:logoReveal 1s ease forwards;
-  animation-delay:2.5s;
+  transform:scale(0.9);
+  animation:logoFade 2s ease forwards;
 }
 
 .logoSplash img{
-  width:220px;
+  width:260px;
 }
 
-@keyframes bgCinematic{
-  0%{ transform:scale(1.1); filter:blur(10px) brightness(0.6); }
-  100%{ transform:scale(1); filter:blur(0px) brightness(1); }
-}
-
-@keyframes logoReveal{
-  to{ opacity:1; transform:translateY(0); }
+@keyframes logoFade{
+  0%{
+    opacity:0;
+    transform:scale(0.9);
+  }
+  100%{
+    opacity:1;
+    transform:scale(1);
+  }
 }
 
 /* ===== PANTALLAS ===== */
@@ -118,7 +118,7 @@ body{
   outline:none;
 }
 
-/* ===== SLIDER PREMIUM ===== */
+/* ===== SLIDER PREMIUM SUAVE ===== */
 
 .slider-container{
   width:100%;
@@ -129,10 +129,11 @@ body{
   width:75%;
   height:60px;
   margin:0 auto;
-  background:rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05); /* casi transparente */
   border-radius:50px;
   position:relative;
   overflow:hidden;
+  backdrop-filter:blur(8px);
 }
 
 .slider-fill{
@@ -141,9 +142,9 @@ body{
   top:0;
   height:100%;
   width:0%;
-  background:rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.08); /* tenue */
   border-radius:50px;
-  transition: width 0.2s ease;
+  transition: width 0.3s ease;
 }
 
 .slider-thumb{
@@ -152,21 +153,21 @@ body{
   position:absolute;
   left:0;
   top:0;
-  background:rgba(255,255,255,0.95);
+  background:rgba(255,255,255,0.15); /* muy tenue */
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:left 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter:blur(12px);
   overflow:hidden;
 }
 
 .slider-thumb img{
-  width:40px;
-  height:40px;
+  width:36px;
+  height:36px;
   object-fit:contain;
 }
-
 .slider-text{
   position:absolute;
   width:100%;
@@ -184,8 +185,8 @@ body{
 <body>
 
 <div id="splashScreen">
-  <div class="logoSplash">
-    <img src="assets/img/logo.png" alt="Construye Más">
+  <div class="assets/img/logo2.png">
+    <img src="assets/img/logo2.png" alt="Construye Más">
   </div>
 </div>
 
