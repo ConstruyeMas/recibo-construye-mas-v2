@@ -15,15 +15,213 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-/* TODO TU CSS ORIGINAL EXACTAMENTE IGUAL */
-/* (lo omití aquí para no hacer este mensaje infinito,
-pero en tu archivo debe quedarse exactamente como lo tienes) */
+
+/* ================== BLINDAJE RECIBO ================== */
+#recibo {
+    display: none !important;
+}
+
+/* Quitar fondo amarillo autofill iOS */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px rgba(255,255,255,0.1) inset !important;
+    box-shadow: 0 0 0 1000px rgba(255,255,255,0.1) inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* FULLSCREEN FIX */
+html, body {
+    height: 100%;
+    background: #000;
+}
+
+body {
+    overflow: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ===== SPLASH ===== */
+
+#splashScreen {
+    position: fixed;
+    inset: 0;
+    background: url('assets/img/splash.png') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.logoSplash {
+    opacity: 0;
+    transform: scale(0.9);
+    animation: logoFade 2s ease forwards;
+}
+
+.logoSplash img {
+    width: 260px;
+}
+
+@keyframes logoFade {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* ===== PANTALLAS ===== */
+
+.screen {
+    position: fixed;
+    inset: 0;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition:
+        opacity 2.5s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 2.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.screen.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-premium {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    color: white;
+    font-size: 18px;
+    outline: none;
+}
+
+/* ===== SLIDER ===== */
+
+.slider-container {
+    width: 100%;
+    margin-bottom: 35px;
+}
+
+.slider-track {
+    width: 75%;
+    height: 60px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+}
+
+.slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50px;
+    transition: width 0.3s ease;
+}
+
+.slider-thumb {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slider-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slider-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 15px;
+}
+
+/* CONFIRMACION */
+
+.mensaje-confirmacion {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.linea1, .linea2 {
+    font-weight: 700;
+    color: black;
+}
+
+.linea1 { font-size: 22px; }
+.linea2 { font-size: 20px; }
+
 </style>
 </head>
 
 <body>
-
-<!-- ================= V2 INTERFAZ ================= -->
 
 <!-- SPLASH -->
 <div id="splashScreen">
@@ -42,9 +240,7 @@ pero en tu archivo debe quedarse exactamente como lo tienes) */
         <div class="slider-container">
             <div class="slider-track">
                 <div class="slider-fill"></div>
-                <div class="slider-thumb">
-                    <img src="assets/img/icon-slide.png">
-                </div>
+                <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
             </div>
         </div>
     </div>
@@ -60,9 +256,7 @@ pero en tu archivo debe quedarse exactamente como lo tienes) */
         <div class="slider-container">
             <div class="slider-track">
                 <div class="slider-fill"></div>
-                <div class="slider-thumb">
-                    <img src="assets/img/icon-slide.png">
-                </div>
+                <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
             </div>
         </div>
     </div>
@@ -78,9 +272,7 @@ pero en tu archivo debe quedarse exactamente como lo tienes) */
         <div class="slider-container">
             <div class="slider-track">
                 <div class="slider-fill"></div>
-                <div class="slider-thumb">
-                    <img src="assets/img/icon-slide.png">
-                </div>
+                <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
             </div>
         </div>
     </div>
@@ -95,9 +287,7 @@ pero en tu archivo debe quedarse exactamente como lo tienes) */
             <div class="slider-track">
                 <div class="slider-fill"></div>
                 <div class="slider-text">Emitir comprobante</div>
-                <div class="slider-thumb emitir-thumb">
-                    <img src="assets/img/icon-slide.png">
-                </div>
+                <div class="slider-thumb emitir-thumb"><img src="assets/img/icon-slide.png"></div>
             </div>
         </div>
     </div>
@@ -116,49 +306,67 @@ pero en tu archivo debe quedarse exactamente como lo tienes) */
     </div>
 </div>
 
-<!-- ================= RECIBO OCULTO ================= -->
+<!-- RECIBO OCULTO -->
+<div id="recibo" style="width:816px;height:1056px;position:relative;">
+    <img src="assets/recibo_base.png" style="position:absolute;top:0;left:0;width:816px;height:1056px;">
+    <div id="r_id" style="position:absolute;top:55px;right:13px;font-weight:bold;"></div>
+    <div id="r_fecha" style="position:absolute;top:90px;right:13px;"></div>
+    <div id="r_trabajo" style="position:absolute;top:300px;left:28px;font-size:28px;font-weight:bold;"></div>
+    <div id="r_cliente" style="position:absolute;bottom:240px;left:28px;"></div>
+    <div id="r_monto" style="position:absolute;top:455px;width:100%;text-align:center;font-size:32px;font-weight:bold;"></div>
+</div>
 
-<div id="recibo" style="display:none; width:816px; height:1056px; position:relative;">
-    <img src="assets/recibo_base.png"
-         style="position:absolute; top:0; left:0; width:816px; height:1056px;">
-
-    <div id="r_id" style="position:absolute; top:55px; right:13px; font-weight:bold;"></div>
-    <div id="r_fecha" style="position:absolute; top:90px; right:13px;"></div>
-    <div id="r_trabajo" style="position:absolute; top:300px; left:28px; font-size:28px; font-weight:bold;"></div>
-    <div id="r_cliente" style="position:absolute; bottom:240px; left:28px;"></div>
-    <div id="r_monto" style="position:absolute; top:455px; width:100%; text-align:center; font-size:32px; font-weight:bold;"></div>
 <script>
 
-/* ================= MOTOR ================= */
+let currentIndex = 0;
+let isTransitioning = false;
+
+const screens = ["screen-nombre","screen-concepto","screen-monto","screen-emitir","screen-confirmacion"];
+
+function goTo(next){ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active")); document.getElementById(next).classList.add("active"); }
+
+function nextScreen(){
+    if(isTransitioning) return;
+    isTransitioning = true;
+    currentIndex = (currentIndex + 1) % screens.length;
+    goTo(screens[currentIndex]);
+    setTimeout(()=>{ isTransitioning = false; },2500);
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(()=>{ 
+        const splash=document.getElementById("splashScreen");
+        splash.style.transition="opacity 2.5s ease";
+        splash.style.opacity="0";
+        setTimeout(()=> splash.remove(),2500);
+    },3500);
+});
 
 function generarID(){
-    let now = new Date();
-    return "CM-" + now.getFullYear() + "-" + Math.floor(Math.random()*10000).toString().padStart(4,"0");
+    return "CM-" + new Date().getFullYear() + "-" + Math.floor(Math.random()*10000).toString().padStart(4,"0");
 }
 
 function emitirRecibo(){
 
-    const cliente = document.getElementById("inputCliente").value.trim();
-    const trabajo = document.getElementById("inputTrabajo").value.trim();
-    const monto = parseFloat(document.getElementById("inputMonto").value);
+    const cliente=document.getElementById("inputCliente").value.trim();
+    const trabajo=document.getElementById("inputTrabajo").value.trim();
+    const monto=parseFloat(document.getElementById("inputMonto").value);
 
-    if(!cliente || !trabajo || !monto){
-        alert("Completa todos los campos");
-        return false;
-    }
+    if(!cliente||!trabajo||!monto){ alert("Completa todos los campos"); return false; }
 
-    const id = generarID();
-    const fecha = new Date().toLocaleDateString("es-MX");
+    const id=generarID();
+    const fecha=new Date().toLocaleDateString("es-MX");
 
-    document.getElementById("r_id").innerText = "ID: " + id;
-    document.getElementById("r_fecha").innerText = fecha;
-    document.getElementById("r_trabajo").innerText = trabajo;
-    document.getElementById("r_cliente").innerText = "Recibí de: " + cliente;
-    document.getElementById("r_monto").innerText = "$" + monto.toLocaleString("es-MX") + " MXN";
+    document.getElementById("r_id").innerText="ID: "+id;
+    document.getElementById("r_fecha").innerText=fecha;
+    document.getElementById("r_trabajo").innerText=trabajo;
+    document.getElementById("r_cliente").innerText="Recibí de: "+cliente;
+    document.getElementById("r_monto").innerText="$"+monto.toLocaleString("es-MX")+" MXN";
 
-    document.getElementById("nombreConfirmacion").innerText = cliente;
+    document.getElementById("nombreConfirmacion").innerText=cliente;
 
-    const element = document.getElementById("recibo");
+    const element=document.getElementById("recibo");
+    element.style.display="block";
 
     html2pdf().set({
         margin:0,
@@ -168,22 +376,16 @@ function emitirRecibo(){
         jsPDF:{unit:'in',format:'letter',orientation:'portrait'}
     }).from(element).save();
 
+    setTimeout(()=>{ element.style.display="none"; },800);
+
     return true;
 }
 
-/* ================= SLIDER ================= */
-
 document.querySelectorAll(".slider-thumb").forEach(thumb=>{
     thumb.addEventListener("touchend",()=>{
-
         if(thumb.classList.contains("emitir-thumb")){
-            if(emitirRecibo()){
-                setTimeout(()=> nextScreen(), 600);
-            }
-        } else {
-            nextScreen();
-        }
-
+            if(emitirRecibo()){ setTimeout(()=> nextScreen(),600); }
+        } else { nextScreen(); }
     });
 });
 
