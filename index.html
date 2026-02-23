@@ -12,14 +12,7 @@
 
 <title>Recibo Construye Más V2</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <style>
-
-/* ================== BLINDAJE RECIBO ================== */
-#recibo {
-    display: none !important;
-}
 
 /* Quitar fondo amarillo autofill iOS */
 input:-webkit-autofill,
@@ -41,7 +34,8 @@ input:-webkit-autofill:active {
 }
 
 /* FULLSCREEN FIX */
-html, body {
+html,
+body {
     height: 100%;
     background: #000;
 }
@@ -52,8 +46,7 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ===== SPLASH ===== */
-
+/* ===== SPLASH CINEMÁTICO ===== */
 #splashScreen {
     position: fixed;
     inset: 0;
@@ -75,12 +68,17 @@ body {
 }
 
 @keyframes logoFade {
-    0% { opacity: 0; transform: scale(0.9); }
-    100% { opacity: 1; transform: scale(1); }
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* ===== PANTALLAS ===== */
-
 .screen {
     position: fixed;
     inset: 0;
@@ -142,7 +140,6 @@ body {
 }
 
 /* ===== SLIDER ===== */
-
 .slider-container {
     width: 100%;
     margin-bottom: 35px;
@@ -201,8 +198,7 @@ body {
     font-size: 15px;
 }
 
-/* CONFIRMACION */
-
+/* ===== MENSAJE CONFIRMACION ===== */
 .mensaje-confirmacion {
     text-align: center;
     display: flex;
@@ -210,13 +206,17 @@ body {
     gap: 8px;
 }
 
-.linea1, .linea2 {
+.linea1 {
+    font-size: 22px;
     font-weight: 700;
     color: black;
 }
 
-.linea1 { font-size: 22px; }
-.linea2 { font-size: 20px; }
+.linea2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: black;
+}
 
 </style>
 </head>
@@ -226,7 +226,7 @@ body {
 <!-- SPLASH -->
 <div id="splashScreen">
     <div class="logoSplash">
-        <img src="assets/img/logo.png">
+        <img src="assets/img/logo.png" alt="Construye Más">
     </div>
 </div>
 
@@ -235,12 +235,14 @@ body {
     <div class="overlay"></div>
     <div class="content">
         <div class="form-center">
-            <input type="text" id="inputCliente" class="input-premium" placeholder="Nombre completo">
+            <input type="text" class="input-premium" placeholder="Nombre completo">
         </div>
         <div class="slider-container">
             <div class="slider-track">
                 <div class="slider-fill"></div>
-                <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+                <div class="slider-thumb">
+                    <img src="assets/img/icon-slide.png" alt="Logo">
+                </div>
             </div>
         </div>
     </div>
@@ -251,12 +253,14 @@ body {
     <div class="overlay"></div>
     <div class="content">
         <div class="form-center">
-            <input type="text" id="inputTrabajo" class="input-premium" placeholder="Nombre de la obra">
+            <input type="text" class="input-premium" placeholder="Nombre de la obra">
         </div>
         <div class="slider-container">
             <div class="slider-track">
                 <div class="slider-fill"></div>
-                <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+                <div class="slider-thumb">
+                    <img src="assets/img/icon-slide.png" alt="Logo">
+                </div>
             </div>
         </div>
     </div>
@@ -267,12 +271,14 @@ body {
     <div class="overlay"></div>
     <div class="content">
         <div class="form-center">
-            <input type="number" id="inputMonto" class="input-premium" placeholder="$ 0.00">
+            <input type="number" class="input-premium" placeholder="$ 0.00">
         </div>
         <div class="slider-container">
             <div class="slider-track">
                 <div class="slider-fill"></div>
-                <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+                <div class="slider-thumb">
+                    <img src="assets/img/icon-slide.png" alt="Logo">
+                </div>
             </div>
         </div>
     </div>
@@ -287,7 +293,9 @@ body {
             <div class="slider-track">
                 <div class="slider-fill"></div>
                 <div class="slider-text">Emitir comprobante</div>
-                <div class="slider-thumb emitir-thumb"><img src="assets/img/icon-slide.png"></div>
+                <div class="slider-thumb">
+                    <img src="assets/img/icon-slide.png" alt="Logo">
+                </div>
             </div>
         </div>
     </div>
@@ -300,20 +308,19 @@ body {
         <div class="form-center">
             <div class="mensaje-confirmacion">
                 <div class="linea1">Comprobante Emitido</div>
-                <div class="linea2" id="nombreConfirmacion"></div>
+                <div class="linea2">Ing. Campos</div>
+            </div>
+        </div>
+        <div class="slider-container">
+            <div class="slider-track">
+                <div class="slider-fill"></div>
+                <div class="slider-text">Hasta luego</div>
+                <div class="slider-thumb">
+                    <img src="assets/img/icon-slide.png" alt="Logo">
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- RECIBO OCULTO -->
-<div id="recibo" style="width:816px;height:1056px;position:relative;">
-    <img src="assets/recibo_base.png" style="position:absolute;top:0;left:0;width:816px;height:1056px;">
-    <div id="r_id" style="position:absolute;top:55px;right:13px;font-weight:bold;"></div>
-    <div id="r_fecha" style="position:absolute;top:90px;right:13px;"></div>
-    <div id="r_trabajo" style="position:absolute;top:300px;left:28px;font-size:28px;font-weight:bold;"></div>
-    <div id="r_cliente" style="position:absolute;bottom:240px;left:28px;"></div>
-    <div id="r_monto" style="position:absolute;top:455px;width:100%;text-align:center;font-size:32px;font-weight:bold;"></div>
 </div>
 
 <script>
@@ -321,82 +328,96 @@ body {
 let currentIndex = 0;
 let isTransitioning = false;
 
-const screens = ["screen-nombre","screen-concepto","screen-monto","screen-emitir","screen-confirmacion"];
+const screens = [
+    "screen-nombre",
+    "screen-concepto",
+    "screen-monto",
+    "screen-emitir",
+    "screen-confirmacion"
+];
 
-function goTo(next){ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active")); document.getElementById(next).classList.add("active"); }
+function goTo(nextScreen) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(nextScreen).classList.add("active");
+}
 
-function nextScreen(){
-    if(isTransitioning) return;
+function nextScreen() {
+    if (isTransitioning) return;
     isTransitioning = true;
+
     currentIndex = (currentIndex + 1) % screens.length;
     goTo(screens[currentIndex]);
-    setTimeout(()=>{ isTransitioning = false; },2500);
+
+    setTimeout(() => {
+        isTransitioning = false;
+    }, 2500);
 }
 
-document.addEventListener("DOMContentLoaded",function(){
-    setTimeout(()=>{ 
-        const splash=document.getElementById("splashScreen");
-        splash.style.transition="opacity 2.5s ease";
-        splash.style.opacity="0";
-        setTimeout(()=> splash.remove(),2500);
-    },3500);
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => {
+        const splash = document.getElementById("splashScreen");
+        if (splash) {
+            splash.style.transition = "opacity 2.5s ease";
+            splash.style.opacity = "0";
+            setTimeout(() => splash.remove(), 2500);
+        }
+    }, 3500);
 });
 
-function generarID(){
-    return "CM-" + new Date().getFullYear() + "-" + Math.floor(Math.random()*10000).toString().padStart(4,"0");
-}
+document.querySelectorAll(".slider-thumb").forEach(thumb => {
 
-function emitirRecibo(){
+    const track = thumb.parentElement;
+    const fill = track.querySelector(".slider-fill");
 
-    const cliente=document.getElementById("inputCliente").value.trim();
-    const trabajo=document.getElementById("inputTrabajo").value.trim();
-    const monto=parseFloat(document.getElementById("inputMonto").value);
+    let startX = 0;
+    let currentX = 0;
+    let dragging = false;
 
-    if(!cliente||!trabajo||!monto){
-        alert("Completa todos los campos");
-        return false;
-    }
-
-    const id=generarID();
-    const fecha=new Date().toLocaleDateString("es-MX");
-
-    document.getElementById("r_id").innerText="ID: "+id;
-    document.getElementById("r_fecha").innerText=fecha;
-    document.getElementById("r_trabajo").innerText=trabajo;
-    document.getElementById("r_cliente").innerText="Recibí de: "+cliente;
-    document.getElementById("r_monto").innerText="$"+monto.toLocaleString("es-MX")+" MXN";
-    document.getElementById("nombreConfirmacion").innerText=cliente;
-
-    const element=document.getElementById("recibo");
-    element.style.display="block";
-
-    const opt = {
-        margin: 0,
-        filename: `Recibo_${id}.pdf`,
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 3 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).outputPdf('blob').then(function(pdfBlob){
-
-        const blobUrl = URL.createObjectURL(pdfBlob);
-        window.open(blobUrl, '_blank');
-
-        setTimeout(()=>{
-            element.style.display="none";
-        },800);
-
+    thumb.addEventListener("touchstart", (e) => {
+        dragging = true;
+        startX = e.touches[0].clientX;
     });
 
-    return true;
-}
-document.querySelectorAll(".slider-thumb").forEach(thumb=>{
-    thumb.addEventListener("touchend",()=>{
-        if(thumb.classList.contains("emitir-thumb")){
-            if(emitirRecibo()){ setTimeout(()=> nextScreen(),600); }
-        } else { nextScreen(); }
+    thumb.addEventListener("touchmove", (e) => {
+        if (!dragging) return;
+
+        const maxMove = track.offsetWidth - thumb.offsetWidth;
+
+        currentX = Math.max(
+            0,
+            Math.min(e.touches[0].clientX - startX, maxMove)
+        );
+
+        thumb.style.left = currentX + "px";
+        fill.style.width = (currentX / maxMove) * 100 + "%";
     });
+
+    thumb.addEventListener("touchend", () => {
+
+        const maxMove = track.offsetWidth - thumb.offsetWidth;
+
+        if (currentX > maxMove * 0.85) {
+
+            thumb.style.left = maxMove + "px";
+            fill.style.width = "100%";
+
+            nextScreen();
+
+            setTimeout(() => {
+                thumb.style.left = "0px";
+                fill.style.width = "0%";
+            }, 2500);
+
+        } else {
+
+            thumb.style.left = "0px";
+            fill.style.width = "0%";
+        }
+
+        dragging = false;
+        currentX = 0;
+    });
+
 });
 
 </script>
