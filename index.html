@@ -352,7 +352,10 @@ function emitirRecibo(){
     const trabajo=document.getElementById("inputTrabajo").value.trim();
     const monto=parseFloat(document.getElementById("inputMonto").value);
 
-    if(!cliente||!trabajo||!monto){ alert("Completa todos los campos"); return false; }
+    if(!cliente||!trabajo||!monto){
+        alert("Completa todos los campos");
+        return false;
+    }
 
     const id=generarID();
     const fecha=new Date().toLocaleDateString("es-MX");
@@ -362,25 +365,32 @@ function emitirRecibo(){
     document.getElementById("r_trabajo").innerText=trabajo;
     document.getElementById("r_cliente").innerText="Recibí de: "+cliente;
     document.getElementById("r_monto").innerText="$"+monto.toLocaleString("es-MX")+" MXN";
-
     document.getElementById("nombreConfirmacion").innerText=cliente;
 
     const element=document.getElementById("recibo");
     element.style.display="block";
 
-    html2pdf().set({
-        margin:0,
-        filename:`Recibo_${id}.pdf`,
-        image:{type:'jpeg',quality:1},
-        html2canvas:{scale:3},
-        jsPDF:{unit:'in',format:'letter',orientation:'portrait'}
-    }).from(element).save();
+    const opt = {
+        margin: 0,
+        filename: `Recibo_${id}.pdf`,
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 3 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
 
-    setTimeout(()=>{ element.style.display="none"; },800);
+    html2pdf().set(opt).from(element).outputPdf('blob').then(function(pdfBlob){
+
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+
+        setTimeout(()=>{
+            element.style.display="none";
+        },800);
+
+    });
 
     return true;
 }
-
 document.querySelectorAll(".slider-thumb").forEach(thumb=>{
     thumb.addEventListener("touchend",()=>{
         if(thumb.classList.contains("emitir-thumb")){
