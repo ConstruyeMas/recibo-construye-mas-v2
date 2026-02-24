@@ -163,7 +163,29 @@ font-size:15px;
 }
 
 /* PREMIUM */
-#premium{background:#000;}
+#premium{
+position:relative;
+background:#000;
+overflow:hidden;
+}
+
+/* WATERMARK */
+.watermark{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+pointer-events:none;
+z-index:1;
+}
+
+.watermark img{
+width:65%;
+max-width:300px;
+opacity:0.05;
+filter:blur(1px);
+}
 
 .premium-card{
 width:85%;
@@ -176,6 +198,7 @@ padding:30px;
 text-align:center;
 color:white;
 z-index:2;
+position:relative;
 }
 
 .premium-header h2{font-weight:300;letter-spacing:2px;}
@@ -247,6 +270,11 @@ z-index:2;
 
 <!-- PREMIUM -->
 <div class="screen" id="premium">
+
+<div class="watermark">
+<img src="assets/img/logo.png" alt="Construye Más">
+</div>
+
 <div class="premium-card">
 <div class="premium-header">
 <h2>Construye <strong>MÁS</strong></h2>
@@ -260,12 +288,14 @@ z-index:2;
 <div class="premium-row"><span>No. Comprobante</span><strong id="previewNumero"></strong></div>
 </div>
 </div>
+
 <div class="slider-container">
 <div class="slider-track">
 <div class="slider-fill"></div>
 <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
 </div>
 </div>
+
 </div>
 
 <!-- EMITIR -->
@@ -304,6 +334,8 @@ z-index:2;
 </div>
 
 <script>
+
+/* TU JS QUEDA EXACTAMENTE IGUAL — NO SE MODIFICA */
 
 let currentIndex=0;
 let isTransitioning=false;
