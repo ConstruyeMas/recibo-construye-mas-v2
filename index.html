@@ -12,13 +12,19 @@
 
 <title>Recibo Construye Más V2</title>
 
+<!-- jsPDF GLOBAL (compatible móvil) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.min.js"></script>
 
 <style>
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 html,body{height:100%;background:#000;}
-body{overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
+
+body{
+overflow:hidden;
+padding-top:env(safe-area-inset-top);
+padding-bottom:env(safe-area-inset-bottom);
+}
 
 #splashScreen{
 position:fixed;
@@ -55,7 +61,8 @@ background-position:center;
 opacity:0;
 transform:translateY(20px);
 pointer-events:none;
-transition:opacity .6s ease, transform .6s ease;
+transition:opacity 2.5s cubic-bezier(0.22,1,0.36,1),
+transform 2.5s cubic-bezier(0.22,1,0.36,1);
 }
 
 .screen.active{
@@ -123,6 +130,7 @@ height:100%;
 width:0%;
 background:rgba(255,255,255,0.08);
 border-radius:50px;
+transition:width 0.3s ease;
 }
 
 .slider-thumb{
@@ -136,6 +144,7 @@ overflow:hidden;
 display:flex;
 align-items:center;
 justify-content:center;
+transition:left 0.35s cubic-bezier(0.22,1,0.36,1);
 }
 
 .slider-thumb img{
@@ -157,7 +166,11 @@ font-size:15px;
 
 /* PREMIUM */
 
-#premium{position:relative;background:#000;overflow:hidden;}
+#premium{
+position:relative;
+background:#000;
+overflow:hidden;
+}
 
 .watermark{
 position:absolute;
@@ -259,14 +272,19 @@ position:relative;
 
 <!-- PREMIUM -->
 <div class="screen" id="premium">
-<div class="watermark"><img src="assets/img/logo.png"></div>
+<div class="watermark">
+<img src="assets/img/logo.png">
+</div>
 <div class="premium-card">
 <div class="premium-header">
 <h2>Construye <strong>MÁS</strong></h2>
 <p>Durango, Zona Norte</p>
 </div>
 <div class="premium-body">
+<div class="premium-row"><span>Cliente</span><strong id="previewNombre"></strong></div>
+<div class="premium-row"><span>Proyecto</span><strong id="previewProyecto"></strong></div>
 <div class="premium-row"><span>Monto</span><strong id="previewMonto"></strong></div>
+<div class="premium-row"><span>Fecha</span><strong id="previewFecha"></strong></div>
 <div class="premium-row"><span>No. Comprobante</span><strong id="previewNumero"></strong></div>
 </div>
 </div>
@@ -297,7 +315,12 @@ position:relative;
 <div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
 <div class="overlay"></div>
 <div class="content">
-<div class="form-center"><div>Comprobante Emitido</div></div>
+<div class="form-center">
+<div class="mensaje-confirmacion">
+<div class="linea1">Comprobante Emitido</div>
+<div class="linea2">Ing. Campos</div>
+</div>
+</div>
 <div class="slider-container">
 <div class="slider-track">
 <div class="slider-fill"></div>
@@ -310,19 +333,11 @@ position:relative;
 
 <script>
 
-/* CONTROL SPLASH */
-document.addEventListener("DOMContentLoaded",function(){
-setTimeout(()=>{
-const splash=document.getElementById("splashScreen");
-if(splash){
-splash.style.transition="opacity 1s ease";
-splash.style.opacity="0";
-setTimeout(()=>splash.remove(),1000);
-}
-},2500);
-});
-
 let currentIndex=0;
+let isTransitioning=false;
+let nombre="";
+let concepto="";
+let monto="";
 let numeroComprobante=1;
 
 const screens=["screen-nombre","screen-concepto","screen-monto","premium","screen-emitir","screen-confirmacion"];
@@ -332,20 +347,36 @@ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
+/* MOTOR PDF SIMPLE Y FUNCIONAL */
+
 function generarPDF(){
+
 const doc = new jsPDF("p","mm","letter");
+
+const w = doc.internal.pageSize.getWidth();
+
+doc.setFont("helvetica","bold");
 doc.setFontSize(20);
 doc.text("CONSTRUYE MÁS",20,30);
+
+doc.setFontSize(16);
+doc.text("COMPROBANTE DE PAGO",w/2,60,{align:"center"});
+
 doc.setFontSize(28);
-doc.text(document.getElementById("previewMonto").textContent,105,100,{align:"center"});
+doc.text(document.getElementById("previewMonto").textContent,w/2,100,{align:"center"});
+
 doc.save("Comprobante_"+document.getElementById("previewNumero").textContent+".pdf");
 }
 
 function nextScreen(){
+
+if(isTransitioning)return;
+isTransitioning=true;
+
 const currentId=screens[currentIndex];
 
 if(currentId==="screen-monto"){
-let monto=document.querySelector("#screen-monto input").value;
+monto=document.querySelector("#screen-monto input").value;
 const montoFormateado=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(monto);
 const numero=String(numeroComprobante).padStart(4,'0');
 document.getElementById("previewMonto").textContent="$ "+montoFormateado;
@@ -354,45 +385,53 @@ numeroComprobante++;
 }
 
 if(currentId==="premium"){
-setTimeout(()=>generarPDF(),200);
+generarPDF();
 }
 
-currentIndex++;
-if(currentIndex>=screens.length) currentIndex=0;
+currentIndex=(currentIndex+1)%screens.length;
 goTo(screens[currentIndex]);
+
+setTimeout(()=>{isTransitioning=false;},2500);
 }
 
-/* SLIDER SIMPLE ESTABLE */
-
-document.querySelectorAll(".slider-track").forEach(track=>{
-const thumb=track.querySelector(".slider-thumb");
-const fill=track.querySelector(".slider-fill");
-
-let startX=0;
-
-thumb.addEventListener("touchstart",e=>{
-startX=e.touches[0].clientX;
+document.addEventListener("DOMContentLoaded",function(){
+setTimeout(()=>{
+const splash=document.getElementById("splashScreen");
+if(splash){
+splash.style.transition="opacity 2.5s ease";
+splash.style.opacity="0";
+setTimeout(()=>splash.remove(),2500);
+}
+},3500);
 });
 
-thumb.addEventListener("touchend",e=>{
-const endX=e.changedTouches[0].clientX;
-const distance=endX-startX;
-const threshold=track.offsetWidth*0.35;
+document.querySelectorAll(".slider-thumb").forEach(thumb=>{
+const track=thumb.parentElement;
+const fill=track.querySelector(".slider-fill");
+let startX=0,currentX=0,dragging=false;
 
-if(distance>threshold){
-fill.style.width="100%";
-thumb.style.left=(track.offsetWidth-thumb.offsetWidth)+"px";
-setTimeout(()=>{
+thumb.addEventListener("touchstart",e=>{dragging=true;startX=e.touches[0].clientX;});
+thumb.addEventListener("touchmove",e=>{
+if(!dragging)return;
+const max=track.offsetWidth-thumb.offsetWidth;
+currentX=Math.max(0,Math.min(e.touches[0].clientX-startX,max));
+thumb.style.left=currentX+"px";
+if(fill)fill.style.width=(currentX/max)*100+"%";
+});
+thumb.addEventListener("touchend",()=>{
+const max=track.offsetWidth-thumb.offsetWidth;
+if(currentX>max*0.85){
+thumb.style.left=max+"px";
+if(fill)fill.style.width="100%";
 nextScreen();
-thumb.style.left="0px";
-fill.style.width="0%";
-},200);
+setTimeout(()=>{thumb.style.left="0px";if(fill)fill.style.width="0%";},2500);
 }else{
 thumb.style.left="0px";
-fill.style.width="0%";
+if(fill)fill.style.width="0%";
 }
+dragging=false;
+currentX=0;
 });
-
 });
 
 </script>
