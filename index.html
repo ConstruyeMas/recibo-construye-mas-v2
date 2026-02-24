@@ -296,4 +296,157 @@ position:relative;
 
 </div>
 
-<!-- RESTO DEL HTML Y JS QUEDA EXACTAMENTE IGUAL (sin cambios) -->
+<!-- EMITIR -->
+<div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
+<div class="overlay"></div>
+<div class="content">
+<div class="form-center"></div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-text">Emitir comprobante</div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- CONFIRMACION -->
+<div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
+<div class="overlay"></div>
+<div class="content">
+<div class="form-center">
+<div class="mensaje-confirmacion">
+<div class="linea1">Comprobante Emitido</div>
+<div class="linea2">Ing. Campos</div>
+</div>
+</div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-text">Hasta luego</div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+
+let currentIndex=0;
+let isTransitioning=false;
+
+let nombre="";
+let concepto="";
+let monto="";
+let numeroComprobante=1;
+
+const screens=[
+"screen-nombre",
+"screen-concepto",
+"screen-monto",
+"premium",
+"screen-emitir",
+"screen-confirmacion"
+];
+
+function goTo(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function nextScreen(){
+if(isTransitioning)return;
+isTransitioning=true;
+
+const currentId=screens[currentIndex];
+
+if(currentId==="screen-nombre"){
+nombre=document.querySelector("#screen-nombre input").value;
+}
+
+if(currentId==="screen-concepto"){
+concepto=document.querySelector("#screen-concepto input").value;
+}
+
+if(currentId==="screen-monto"){
+
+monto=document.querySelector("#screen-monto input").value;
+
+const montoFormateado=new Intl.NumberFormat('es-MX',{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}).format(monto);
+
+const fecha=new Date();
+const fechaFormateada=fecha.toLocaleDateString('es-MX');
+
+const numero=String(numeroComprobante).padStart(4,'0');
+
+document.getElementById("previewNombre").textContent=nombre;
+document.getElementById("previewProyecto").textContent=concepto;
+document.getElementById("previewMonto").textContent="$ "+montoFormateado;
+document.getElementById("previewFecha").textContent=fechaFormateada;
+document.getElementById("previewNumero").textContent=numero;
+
+numeroComprobante++;
+}
+
+currentIndex=(currentIndex+1)%screens.length;
+goTo(screens[currentIndex]);
+
+setTimeout(()=>{isTransitioning=false;},2500);
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+setTimeout(()=>{
+const splash=document.getElementById("splashScreen");
+if(splash){
+splash.style.transition="opacity 2.5s ease";
+splash.style.opacity="0";
+setTimeout(()=>splash.remove(),2500);
+}
+},3500);
+});
+
+document.querySelectorAll(".slider-thumb").forEach(thumb=>{
+const track=thumb.parentElement;
+const fill=track.querySelector(".slider-fill");
+let startX=0,currentX=0,dragging=false;
+
+thumb.addEventListener("touchstart",e=>{
+dragging=true;
+startX=e.touches[0].clientX;
+});
+
+thumb.addEventListener("touchmove",e=>{
+if(!dragging)return;
+const max=track.offsetWidth-thumb.offsetWidth;
+currentX=Math.max(0,Math.min(e.touches[0].clientX-startX,max));
+thumb.style.left=currentX+"px";
+if(fill)fill.style.width=(currentX/max)*100+"%";
+});
+
+thumb.addEventListener("touchend",()=>{
+const max=track.offsetWidth-thumb.offsetWidth;
+if(currentX>max*0.85){
+thumb.style.left=max+"px";
+if(fill)fill.style.width="100%";
+nextScreen();
+setTimeout(()=>{
+thumb.style.left="0px";
+if(fill)fill.style.width="0%";
+},2500);
+}else{
+thumb.style.left="0px";
+if(fill)fill.style.width="0%";
+}
+dragging=false;
+currentX=0;
+});
+});
+
+</script>
+
+</body>
+</html>
