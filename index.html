@@ -12,246 +12,390 @@
 
 <title>Recibo Construye Más V2</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.min.js"></script>
 
 <style>
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
-
-html,body{
-  height:100%;
-  background:#000;
-}
-
-body{
-  overflow:hidden;
-  padding-top:env(safe-area-inset-top);
-  padding-bottom:env(safe-area-inset-bottom);
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+html,body{height:100%;background:#000;}
+body{overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
 
 #splashScreen{
-  position:fixed;
-  inset:0;
-  background:url('assets/img/splash.png') center/cover no-repeat;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
+position:fixed;
+inset:0;
+background:url('assets/img/splash.png') center/cover no-repeat;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
 }
 
 .logoSplash{
-  opacity:0;
-  transform:scale(0.9);
-  animation:logoFade 2s ease forwards;
+opacity:0;
+transform:scale(0.9);
+animation:logoFade 2s ease forwards;
 }
 
-.logoSplash img{
-  width:260px;
-}
+.logoSplash img{width:260px;}
 
-@keyframes logoFade{
-  to{
-    opacity:1;
-    transform:scale(1);
-  }
-}
+@keyframes logoFade{to{opacity:1;transform:scale(1);}}
+
+/* PANTALLAS */
 
 .screen{
-  position:fixed;
-  inset:0;
-  min-height:100dvh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  background-size:cover;
-  background-position:center;
-  opacity:0;
-  transform:translateY(20px);
-  pointer-events:none;
-  transition:
-    opacity 2.5s cubic-bezier(0.22,1,0.36,1),
-    transform 2.5s cubic-bezier(0.22,1,0.36,1);
+position:fixed;
+inset:0;
+min-height:100dvh;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+background-size:cover;
+background-position:center;
+opacity:0;
+transform:translateY(20px);
+pointer-events:none;
+transition:opacity .6s ease, transform .6s ease;
 }
 
 .screen.active{
-  opacity:1;
-  transform:translateY(0);
-  pointer-events:auto;
+opacity:1;
+transform:translateY(0);
+pointer-events:auto;
 }
 
 .overlay{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,0.45);
+position:absolute;
+inset:0;
+background:rgba(0,0,0,0.45);
 }
 
 .content{
-  position:relative;
-  z-index:2;
-  width:100%;
-  max-width:400px;
-  padding:20px;
-  height:100%;
-  display:flex;
-  flex-direction:column;
+position:relative;
+z-index:2;
+width:100%;
+max-width:400px;
+padding:20px;
+height:100%;
+display:flex;
+flex-direction:column;
 }
 
 .form-center{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .input-premium{
-  width:100%;
-  padding:16px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.3);
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(10px);
-  color:white;
-  font-size:18px;
-  outline:none;
+width:100%;
+padding:16px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,0.3);
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+color:white;
+font-size:18px;
+outline:none;
 }
 
-.slider-container{
-  width:100%;
-  margin-bottom:35px;
-}
+/* SLIDER */
+
+.slider-container{width:100%;margin-bottom:35px;}
 
 .slider-track{
-  width:75%;
-  height:60px;
-  margin:0 auto;
-  background:rgba(255,255,255,0.05);
-  border-radius:50px;
-  position:relative;
-  overflow:hidden;
-  backdrop-filter:blur(8px);
+width:75%;
+height:60px;
+margin:0 auto;
+background:rgba(255,255,255,0.05);
+border-radius:50px;
+position:relative;
+overflow:hidden;
+backdrop-filter:blur(8px);
 }
 
 .slider-fill{
-  position:absolute;
-  left:0;
-  top:0;
-  height:100%;
-  width:0%;
-  background:rgba(255,255,255,0.08);
-  border-radius:50px;
-  transition:width 0.3s ease;
+position:absolute;
+left:0;
+top:0;
+height:100%;
+width:0%;
+background:rgba(255,255,255,0.08);
+border-radius:50px;
 }
 
 .slider-thumb{
-  width:60px;
-  height:60px;
-  position:absolute;
-  left:0;
-  top:0;
-  border-radius:50%;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:left 0.35s cubic-bezier(0.22,1,0.36,1);
+width:60px;
+height:60px;
+position:absolute;
+left:0;
+top:0;
+border-radius:50%;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .slider-thumb img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+width:100%;
+height:100%;
+object-fit:cover;
 }
 
 .slider-text{
-  position:absolute;
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:15px;
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:15px;
 }
 
-/* ---------- PREMIUM ---------- */
+/* PREMIUM */
 
-#premium{
-  position:relative;
-  background:#000;
-  overflow:hidden;
-}
+#premium{position:relative;background:#000;overflow:hidden;}
 
 .watermark{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-  z-index:1;
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+pointer-events:none;
+z-index:1;
 }
 
 .watermark img{
-  width:75%;
-  max-width:340px;
-  opacity:0.07;
-  filter:blur(0.5px);
+width:75%;
+max-width:340px;
+opacity:0.07;
+filter:blur(0.5px);
 }
 
 .premium-card{
-  width:85%;
-  max-width:420px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-  backdrop-filter:blur(12px);
-  border-radius:18px;
-  padding:30px;
-  text-align:center;
-  color:white;
-  z-index:2;
-  position:relative;
+width:85%;
+max-width:420px;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+backdrop-filter:blur(12px);
+border-radius:18px;
+padding:30px;
+text-align:center;
+color:white;
+z-index:2;
+position:relative;
 }
 
-.premium-header h2{
-  font-weight:300;
-  letter-spacing:2px;
-}
-
-.premium-header strong{
-  font-weight:800;
-}
-
-.premium-header p{
-  font-size:13px;
-  opacity:.6;
-  margin-top:4px;
-}
-
-.premium-body{
-  margin-top:25px;
-}
-
-.premium-row{
-  margin-bottom:18px;
-}
-
-.premium-row span{
-  display:block;
-  font-size:12px;
-  opacity:.6;
-}
-
-.premium-row strong{
-  font-size:18px;
-  letter-spacing:1px;
-}
+.premium-header h2{font-weight:300;letter-spacing:2px;}
+.premium-header strong{font-weight:800;}
+.premium-header p{font-size:13px;opacity:.6;margin-top:4px;}
+.premium-body{margin-top:25px;}
+.premium-row{margin-bottom:18px;}
+.premium-row span{display:block;font-size:12px;opacity:.6;}
+.premium-row strong{font-size:18px;letter-spacing:1px;}
 
 </style>
 </head>
 <body>
+
+<!-- SPLASH -->
+<div id="splashScreen">
+<div class="logoSplash">
+<img src="assets/img/logo.png">
+</div>
+</div>
+
+<!-- NOMBRE -->
+<div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
+<div class="overlay"></div>
+<div class="content">
+<div class="form-center">
+<input type="text" class="input-premium" placeholder="Nombre completo">
+</div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- CONCEPTO -->
+<div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
+<div class="overlay"></div>
+<div class="content">
+<div class="form-center">
+<input type="text" class="input-premium" placeholder="Nombre de la obra">
+</div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- MONTO -->
+<div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
+<div class="overlay"></div>
+<div class="content">
+<div class="form-center">
+<input type="number" class="input-premium" placeholder="$ 0.00">
+</div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PREMIUM -->
+<div class="screen" id="premium">
+<div class="watermark"><img src="assets/img/logo.png"></div>
+<div class="premium-card">
+<div class="premium-header">
+<h2>Construye <strong>MÁS</strong></h2>
+<p>Durango, Zona Norte</p>
+</div>
+<div class="premium-body">
+<div class="premium-row"><span>Monto</span><strong id="previewMonto"></strong></div>
+<div class="premium-row"><span>No. Comprobante</span><strong id="previewNumero"></strong></div>
+</div>
+</div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+
+<!-- EMITIR -->
+<div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
+<div class="overlay"></div>
+<div class="content">
+<div class="form-center"></div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-text">Emitir comprobante</div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- CONFIRMACION -->
+<div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
+<div class="overlay"></div>
+<div class="content">
+<div class="form-center"><div>Comprobante Emitido</div></div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-text">Hasta luego</div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+
+/* CONTROL SPLASH */
+document.addEventListener("DOMContentLoaded",function(){
+setTimeout(()=>{
+const splash=document.getElementById("splashScreen");
+if(splash){
+splash.style.transition="opacity 1s ease";
+splash.style.opacity="0";
+setTimeout(()=>splash.remove(),1000);
+}
+},2500);
+});
+
+let currentIndex=0;
+let numeroComprobante=1;
+
+const screens=["screen-nombre","screen-concepto","screen-monto","premium","screen-emitir","screen-confirmacion"];
+
+function goTo(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function generarPDF(){
+const doc = new jsPDF("p","mm","letter");
+doc.setFontSize(20);
+doc.text("CONSTRUYE MÁS",20,30);
+doc.setFontSize(28);
+doc.text(document.getElementById("previewMonto").textContent,105,100,{align:"center"});
+doc.save("Comprobante_"+document.getElementById("previewNumero").textContent+".pdf");
+}
+
+function nextScreen(){
+const currentId=screens[currentIndex];
+
+if(currentId==="screen-monto"){
+let monto=document.querySelector("#screen-monto input").value;
+const montoFormateado=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(monto);
+const numero=String(numeroComprobante).padStart(4,'0');
+document.getElementById("previewMonto").textContent="$ "+montoFormateado;
+document.getElementById("previewNumero").textContent=numero;
+numeroComprobante++;
+}
+
+if(currentId==="premium"){
+setTimeout(()=>generarPDF(),200);
+}
+
+currentIndex++;
+if(currentIndex>=screens.length) currentIndex=0;
+goTo(screens[currentIndex]);
+}
+
+/* SLIDER SIMPLE ESTABLE */
+
+document.querySelectorAll(".slider-track").forEach(track=>{
+const thumb=track.querySelector(".slider-thumb");
+const fill=track.querySelector(".slider-fill");
+
+let startX=0;
+
+thumb.addEventListener("touchstart",e=>{
+startX=e.touches[0].clientX;
+});
+
+thumb.addEventListener("touchend",e=>{
+const endX=e.changedTouches[0].clientX;
+const distance=endX-startX;
+const threshold=track.offsetWidth*0.35;
+
+if(distance>threshold){
+fill.style.width="100%";
+thumb.style.left=(track.offsetWidth-thumb.offsetWidth)+"px";
+setTimeout(()=>{
+nextScreen();
+thumb.style.left="0px";
+fill.style.width="0%";
+},200);
+}else{
+thumb.style.left="0px";
+fill.style.width="0%";
+}
+});
+
+});
+
+</script>
+
+</body>
+</html>
