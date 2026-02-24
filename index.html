@@ -12,9 +12,10 @@
 
 <title>Recibo Construye Más V2</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
 
-/* RESET */
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 html,body{height:100%;background:#000;}
 
@@ -24,7 +25,6 @@ padding-top:env(safe-area-inset-top);
 padding-bottom:env(safe-area-inset-bottom);
 }
 
-/* SPLASH */
 #splashScreen{
 position:fixed;
 inset:0;
@@ -42,9 +42,9 @@ animation:logoFade 2s ease forwards;
 }
 
 .logoSplash img{width:260px;}
+
 @keyframes logoFade{to{opacity:1;transform:scale(1);}}
 
-/* PANTALLAS */
 .screen{
 position:fixed;
 inset:0;
@@ -104,7 +104,6 @@ font-size:18px;
 outline:none;
 }
 
-/* SLIDER */
 .slider-container{width:100%;margin-bottom:35px;}
 
 .slider-track{
@@ -160,14 +159,12 @@ color:white;
 font-size:15px;
 }
 
-/* PREMIUM */
 #premium{
 position:relative;
 background:#000;
 overflow:hidden;
 }
 
-/* WATERMARK */
 .watermark{
 position:absolute;
 inset:0;
@@ -207,53 +204,16 @@ position:relative;
 .premium-row span{display:block;font-size:12px;opacity:.6;}
 .premium-row strong{font-size:18px;letter-spacing:1px;}
 
-/* ========================= */
-/* VERSION LIMPIA PARA PDF  */
-/* ========================= */
-
-@media print {
-
-body * {
-visibility:hidden;
-}
-
-#premium, #premium * {
-visibility:visible;
-}
-
-#premium{
-position:absolute;
-left:0;
-top:0;
-width:100%;
-background:white;
-}
-
-.slider-container,
-.watermark{
-display:none !important;
-}
-
-.premium-card{
-background:white;
-color:black;
-border:1px solid #000;
-}
-
-}
-
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
 <div id="splashScreen">
 <div class="logoSplash">
 <img src="assets/img/logo.png">
 </div>
 </div>
 
-<!-- NOMBRE -->
 <div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -269,7 +229,6 @@ border:1px solid #000;
 </div>
 </div>
 
-<!-- CONCEPTO -->
 <div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -285,7 +244,6 @@ border:1px solid #000;
 </div>
 </div>
 
-<!-- MONTO -->
 <div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -301,13 +259,10 @@ border:1px solid #000;
 </div>
 </div>
 
-<!-- PREMIUM -->
 <div class="screen" id="premium">
-
 <div class="watermark">
 <img src="assets/img/logo.png" alt="Construye Más">
 </div>
-
 <div class="premium-card">
 <div class="premium-header">
 <h2>Construye <strong>MÁS</strong></h2>
@@ -321,17 +276,14 @@ border:1px solid #000;
 <div class="premium-row"><span>No. Comprobante</span><strong id="previewNumero"></strong></div>
 </div>
 </div>
-
 <div class="slider-container">
 <div class="slider-track">
 <div class="slider-fill"></div>
 <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
 </div>
 </div>
-
 </div>
 
-<!-- EMITIR -->
 <div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -346,7 +298,6 @@ border:1px solid #000;
 </div>
 </div>
 
-<!-- CONFIRMACION -->
 <div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -390,6 +341,37 @@ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
+async function generarYCompartirPDF(){
+
+const element=document.querySelector(".premium-card");
+
+const opt={
+margin:0.3,
+filename:"Comprobante_"+document.getElementById("previewNumero").textContent+".pdf",
+image:{type:'jpeg',quality:0.98},
+html2canvas:{scale:2},
+jsPDF:{unit:'in',format:'letter',orientation:'portrait'}
+};
+
+const blob=await html2pdf().set(opt).from(element).outputPdf('blob');
+
+const file=new File([blob],opt.filename,{type:'application/pdf'});
+
+if(navigator.canShare&&navigator.canShare({files:[file]})){
+await navigator.share({
+files:[file],
+title:'Comprobante Construye Más'
+});
+}else{
+const url=URL.createObjectURL(file);
+const a=document.createElement('a');
+a.href=url;
+a.download=opt.filename;
+a.click();
+URL.revokeObjectURL(url);
+}
+}
+
 function nextScreen(){
 if(isTransitioning)return;
 isTransitioning=true;
@@ -415,7 +397,6 @@ maximumFractionDigits:2
 
 const fecha=new Date();
 const fechaFormateada=fecha.toLocaleDateString('es-MX');
-
 const numero=String(numeroComprobante).padStart(4,'0');
 
 document.getElementById("previewNombre").textContent=nombre;
@@ -429,7 +410,7 @@ numeroComprobante++;
 
 if(currentId==="screen-emitir"){
 setTimeout(()=>{
-window.print();
+generarYCompartirPDF();
 },300);
 }
 
