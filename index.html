@@ -18,7 +18,14 @@
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 html,body{height:100%;background:#000;}
-body{overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
+
+body{
+overflow:hidden;
+padding-top:env(safe-area-inset-top);
+padding-bottom:env(safe-area-inset-bottom);
+}
+
+/* SPLASH */
 
 #splashScreen{
 position:fixed;
@@ -37,7 +44,10 @@ animation:logoFade 2s ease forwards;
 }
 
 .logoSplash img{width:260px;}
-@keyframes logoFade{to{opacity:1;transform:scale(1);}}
+
+@keyframes logoFade{
+to{opacity:1;transform:scale(1);}
+}
 
 /* PANTALLAS */
 
@@ -122,6 +132,7 @@ height:100%;
 width:0%;
 background:rgba(255,255,255,0.08);
 border-radius:50px;
+transition:width .3s ease;
 }
 
 .slider-thumb{
@@ -172,7 +183,6 @@ z-index:1;
 width:75%;
 max-width:340px;
 opacity:0.07;
-filter:blur(0.5px);
 }
 
 .premium-card{
@@ -215,7 +225,12 @@ position:relative;
 <div class="form-center">
 <input type="text" class="input-premium" placeholder="Nombre completo">
 </div>
-<div class="slider-container"><div class="slider-track"><div class="slider-fill"></div><div class="slider-thumb"><img src="assets/img/icon-slide.png"></div></div></div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -226,7 +241,12 @@ position:relative;
 <div class="form-center">
 <input type="text" class="input-premium" placeholder="Nombre de la obra">
 </div>
-<div class="slider-container"><div class="slider-track"><div class="slider-fill"></div><div class="slider-thumb"><img src="assets/img/icon-slide.png"></div></div></div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -237,7 +257,12 @@ position:relative;
 <div class="form-center">
 <input type="number" class="input-premium" placeholder="$ 0.00">
 </div>
-<div class="slider-container"><div class="slider-track"><div class="slider-fill"></div><div class="slider-thumb"><img src="assets/img/icon-slide.png"></div></div></div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -254,34 +279,32 @@ position:relative;
 <div class="premium-row"><span>No. Comprobante</span><strong id="previewNumero"></strong></div>
 </div>
 </div>
-<div class="slider-container"><div class="slider-track"><div class="slider-fill"></div><div class="slider-thumb"><img src="assets/img/icon-slide.png"></div></div></div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
 </div>
-
-<!-- EMITIR -->
-<div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
-<div class="overlay"></div>
-<div class="content">
-<div class="form-center"></div>
-<div class="slider-container"><div class="slider-track"><div class="slider-fill"></div><div class="slider-text">Emitir comprobante</div><div class="slider-thumb"><img src="assets/img/icon-slide.png"></div></div></div>
-</div>
-</div>
-
-<!-- CONFIRMACION -->
-<div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
-<div class="overlay"></div>
-<div class="content">
-<div class="form-center"><div class="mensaje-confirmacion"><div>Comprobante Emitido</div></div></div>
-<div class="slider-container"><div class="slider-track"><div class="slider-fill"></div><div class="slider-text">Hasta luego</div><div class="slider-thumb"><img src="assets/img/icon-slide.png"></div></div></div>
 </div>
 </div>
 
 <script>
 
+/* CONTROL SPLASH DEFINITIVO */
+function removerSplash(){
+const splash=document.getElementById("splashScreen");
+if(!splash)return;
+splash.style.transition="opacity 1s ease";
+splash.style.opacity="0";
+setTimeout(()=>{if(splash.parentNode){splash.parentNode.removeChild(splash);}},1000);
+}
+setTimeout(removerSplash,2500);
+
+/* FLUJO */
+
 let currentIndex=0;
-let nombre="", concepto="", monto="";
 let numeroComprobante=1;
 
-const screens=["screen-nombre","screen-concepto","screen-monto","premium","screen-emitir","screen-confirmacion"];
+const screens=["screen-nombre","screen-concepto","screen-monto","premium"];
 
 function goTo(id){
 document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -289,7 +312,7 @@ document.getElementById(id).classList.add("active");
 }
 
 function generarPDF(){
-const doc = new jsPDF("p","mm","letter");
+const doc=new jsPDF("p","mm","letter");
 doc.setFontSize(20);
 doc.text("CONSTRUYE MÁS",20,30);
 doc.setFontSize(28);
@@ -298,11 +321,10 @@ doc.save("Comprobante_"+document.getElementById("previewNumero").textContent+".p
 }
 
 function nextScreen(){
-
 const currentId=screens[currentIndex];
 
 if(currentId==="screen-monto"){
-monto=document.querySelector("#screen-monto input").value;
+let monto=document.querySelector("#screen-monto input").value;
 const montoFormateado=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(monto);
 const numero=String(numeroComprobante).padStart(4,'0');
 document.getElementById("previewMonto").textContent="$ "+montoFormateado;
@@ -311,7 +333,7 @@ numeroComprobante++;
 }
 
 if(currentId==="premium"){
-setTimeout(()=>generarPDF(),200);
+setTimeout(()=>generarPDF(),300);
 }
 
 currentIndex++;
@@ -319,45 +341,34 @@ if(currentIndex>=screens.length) currentIndex=0;
 goTo(screens[currentIndex]);
 }
 
-/* SLIDER ESTABLE iOS */
+/* SLIDER SIMPLE ESTABLE */
 
 document.querySelectorAll(".slider-track").forEach(track=>{
 let thumb=track.querySelector(".slider-thumb");
 let fill=track.querySelector(".slider-fill");
-
-let startX=0,currentX=0,dragging=false;
+let startX=0;
 
 thumb.addEventListener("touchstart",e=>{
-dragging=true;
 startX=e.touches[0].clientX;
 });
 
-thumb.addEventListener("touchmove",e=>{
-if(!dragging)return;
-const max=track.offsetWidth-thumb.offsetWidth;
-currentX=e.touches[0].clientX-startX;
-if(currentX<0)currentX=0;
-if(currentX>max)currentX=max;
-thumb.style.left=currentX+"px";
-fill.style.width=(currentX/max)*100+"%";
-});
+thumb.addEventListener("touchend",e=>{
+let endX=e.changedTouches[0].clientX;
+let distance=endX-startX;
+let threshold=track.offsetWidth*0.35;
 
-thumb.addEventListener("touchend",()=>{
-const max=track.offsetWidth-thumb.offsetWidth;
-if(currentX>max*0.8){
-thumb.style.left=max+"px";
+if(distance>threshold){
 fill.style.width="100%";
+thumb.style.left=(track.offsetWidth-thumb.offsetWidth)+"px";
 setTimeout(()=>{
 nextScreen();
 thumb.style.left="0px";
 fill.style.width="0%";
-},150);
+},200);
 }else{
 thumb.style.left="0px";
 fill.style.width="0%";
 }
-dragging=false;
-currentX=0;
 });
 });
 
