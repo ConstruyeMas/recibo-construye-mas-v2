@@ -167,7 +167,7 @@ background:#000;
 overflow:hidden;
 }
 
-/* WATERMARK AJUSTADA */
+/* WATERMARK */
 .watermark{
 position:absolute;
 inset:0;
@@ -206,6 +206,41 @@ position:relative;
 .premium-row{margin-bottom:18px;}
 .premium-row span{display:block;font-size:12px;opacity:.6;}
 .premium-row strong{font-size:18px;letter-spacing:1px;}
+
+/* ========================= */
+/* VERSION LIMPIA PARA PDF  */
+/* ========================= */
+
+@media print {
+
+body * {
+visibility:hidden;
+}
+
+#premium, #premium * {
+visibility:visible;
+}
+
+#premium{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+background:white;
+}
+
+.slider-container,
+.watermark{
+display:none !important;
+}
+
+.premium-card{
+background:white;
+color:black;
+border:1px solid #000;
+}
+
+}
 
 </style>
 </head>
@@ -390,6 +425,12 @@ document.getElementById("previewFecha").textContent=fechaFormateada;
 document.getElementById("previewNumero").textContent=numero;
 
 numeroComprobante++;
+}
+
+if(currentId==="screen-emitir"){
+setTimeout(()=>{
+window.print();
+},300);
 }
 
 currentIndex=(currentIndex+1)%screens.length;
