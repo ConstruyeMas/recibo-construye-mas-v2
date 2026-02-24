@@ -42,7 +42,6 @@ animation:logoFade 2s ease forwards;
 }
 
 .logoSplash img{width:260px;}
-
 @keyframes logoFade{to{opacity:1;transform:scale(1);}}
 
 .screen{
@@ -321,27 +320,19 @@ position:relative;
 
 let currentIndex=0;
 let isTransitioning=false;
-
 let nombre="";
 let concepto="";
 let monto="";
 let numeroComprobante=1;
 
-const screens=[
-"screen-nombre",
-"screen-concepto",
-"screen-monto",
-"premium",
-"screen-emitir",
-"screen-confirmacion"
-];
+const screens=["screen-nombre","screen-concepto","screen-monto","premium","screen-emitir","screen-confirmacion"];
 
 function goTo(id){
 document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
-async function generarYCompartirPDF(){
+async function generarPDF(){
 
 const element=document.querySelector(".premium-card");
 
@@ -353,23 +344,7 @@ html2canvas:{scale:2},
 jsPDF:{unit:'in',format:'letter',orientation:'portrait'}
 };
 
-const blob=await html2pdf().set(opt).from(element).outputPdf('blob');
-
-const file=new File([blob],opt.filename,{type:'application/pdf'});
-
-if(navigator.canShare&&navigator.canShare({files:[file]})){
-await navigator.share({
-files:[file],
-title:'Comprobante Construye Más'
-});
-}else{
-const url=URL.createObjectURL(file);
-const a=document.createElement('a');
-a.href=url;
-a.download=opt.filename;
-a.click();
-URL.revokeObjectURL(url);
-}
+await html2pdf().set(opt).from(element).save();
 }
 
 function nextScreen(){
@@ -387,36 +362,25 @@ concepto=document.querySelector("#screen-concepto input").value;
 }
 
 if(currentId==="screen-monto"){
-
 monto=document.querySelector("#screen-monto input").value;
-
-const montoFormateado=new Intl.NumberFormat('es-MX',{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}).format(monto);
-
+const montoFormateado=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(monto);
 const fecha=new Date();
 const fechaFormateada=fecha.toLocaleDateString('es-MX');
 const numero=String(numeroComprobante).padStart(4,'0');
-
 document.getElementById("previewNombre").textContent=nombre;
 document.getElementById("previewProyecto").textContent=concepto;
 document.getElementById("previewMonto").textContent="$ "+montoFormateado;
 document.getElementById("previewFecha").textContent=fechaFormateada;
 document.getElementById("previewNumero").textContent=numero;
-
 numeroComprobante++;
 }
 
 if(currentId==="screen-emitir"){
-setTimeout(()=>{
-generarYCompartirPDF();
-},300);
+setTimeout(()=>{generarPDF();},400);
 }
 
 currentIndex=(currentIndex+1)%screens.length;
 goTo(screens[currentIndex]);
-
 setTimeout(()=>{isTransitioning=false;},2500);
 }
 
@@ -436,11 +400,7 @@ const track=thumb.parentElement;
 const fill=track.querySelector(".slider-fill");
 let startX=0,currentX=0,dragging=false;
 
-thumb.addEventListener("touchstart",e=>{
-dragging=true;
-startX=e.touches[0].clientX;
-});
-
+thumb.addEventListener("touchstart",e=>{dragging=true;startX=e.touches[0].clientX;});
 thumb.addEventListener("touchmove",e=>{
 if(!dragging)return;
 const max=track.offsetWidth-thumb.offsetWidth;
@@ -448,17 +408,13 @@ currentX=Math.max(0,Math.min(e.touches[0].clientX-startX,max));
 thumb.style.left=currentX+"px";
 if(fill)fill.style.width=(currentX/max)*100+"%";
 });
-
 thumb.addEventListener("touchend",()=>{
 const max=track.offsetWidth-thumb.offsetWidth;
 if(currentX>max*0.85){
 thumb.style.left=max+"px";
 if(fill)fill.style.width="100%";
 nextScreen();
-setTimeout(()=>{
-thumb.style.left="0px";
-if(fill)fill.style.width="0%";
-},2500);
+setTimeout(()=>{thumb.style.left="0px";if(fill)fill.style.width="0%";},2500);
 }else{
 thumb.style.left="0px";
 if(fill)fill.style.width="0%";
