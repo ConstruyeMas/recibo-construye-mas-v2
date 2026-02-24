@@ -12,7 +12,9 @@
 
 <title>Recibo Construye Más V2</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- NUEVAS LIBRERÍAS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 
 <style>
 
@@ -43,6 +45,8 @@ animation:logoFade 2s ease forwards;
 
 .logoSplash img{width:260px;}
 @keyframes logoFade{to{opacity:1;transform:scale(1);}}
+
+/* PANTALLAS */
 
 .screen{
 position:fixed;
@@ -103,6 +107,8 @@ font-size:18px;
 outline:none;
 }
 
+/* SLIDER */
+
 .slider-container{width:100%;margin-bottom:35px;}
 
 .slider-track{
@@ -157,6 +163,8 @@ justify-content:center;
 color:white;
 font-size:15px;
 }
+
+/* PREMIUM */
 
 #premium{
 position:relative;
@@ -260,7 +268,7 @@ position:relative;
 
 <div class="screen" id="premium">
 <div class="watermark">
-<img src="assets/img/logo.png" alt="Construye Más">
+<img src="assets/img/logo.png">
 </div>
 <div class="premium-card">
 <div class="premium-header">
@@ -332,22 +340,95 @@ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
+/* ============================
+   NUEVO MOTOR PDF INSTITUCIONAL
+============================ */
+
 async function generarPDF(){
 
-const element=document.querySelector(".premium-card");
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF("p","mm","letter");
 
-const opt={
-margin:0.3,
-filename:"Comprobante_"+document.getElementById("previewNumero").textContent+".pdf",
-image:{type:'jpeg',quality:0.98},
-html2canvas:{scale:2},
-jsPDF:{unit:'in',format:'letter',orientation:'portrait'}
-};
+const w = doc.internal.pageSize.getWidth();
+const h = doc.internal.pageSize.getHeight();
 
-await html2pdf().set(opt).from(element).save();
+/* MARCO */
+doc.setLineWidth(1);
+doc.rect(10,10,w-20,h-20);
+
+/* ENCABEZADO */
+doc.setFont("helvetica","bold");
+doc.setFontSize(22);
+doc.text("CONSTRUYE MÁS",20,30);
+
+doc.setFontSize(10);
+doc.setFont("helvetica","normal");
+doc.text("Durango, Zona Norte",20,36);
+
+doc.setFontSize(11);
+doc.setFont("helvetica","bold");
+doc.text("JOSÉ MANUEL CAMPOS CASTELLANOS",w-20,30,{align:"right"});
+doc.text("CACM860523TJ7",w-20,36,{align:"right"});
+
+/* LINEA */
+doc.setLineWidth(0.5);
+doc.line(10,45,w-10,45);
+
+/* TITULO */
+doc.setFontSize(18);
+doc.text("COMPROBANTE DE PAGO",w/2,65,{align:"center"});
+
+/* MONTO */
+doc.setFontSize(14);
+doc.setFont("helvetica","normal");
+doc.text("MONTO",w/2,95,{align:"center"});
+
+doc.setFontSize(28);
+doc.setFont("helvetica","bold");
+doc.text(document.getElementById("previewMonto").textContent,w/2,110,{align:"center"});
+
+/* REFERENCIA */
+doc.setFontSize(12);
+doc.setFont("helvetica","normal");
+doc.text("REFERENCIA",w/2,150,{align:"center"});
+
+doc.setFontSize(16);
+doc.setFont("helvetica","bold");
+doc.text(document.getElementById("previewNumero").textContent,w/2,160,{align:"center"});
+
+/* FOLIO */
+const folioAuth=Math.random().toString(16).substring(2,18);
+
+doc.setFontSize(12);
+doc.setFont("helvetica","normal");
+doc.text("FOLIO DE AUTENTICACIÓN",w/2,175,{align:"center"});
+
+doc.setFontSize(14);
+doc.setFont("helvetica","bold");
+doc.text(folioAuth,w/2,185,{align:"center"});
+
+/* QR */
+const qrData="Construye Más | Ref: "+document.getElementById("previewNumero").textContent+" | Monto: "+document.getElementById("previewMonto").textContent;
+const qrCanvas=document.createElement("canvas");
+await QRCode.toCanvas(qrCanvas,qrData);
+const qrImage=qrCanvas.toDataURL("image/png");
+doc.addImage(qrImage,"PNG",20,h-60,40,40);
+
+/* DATOS INFERIORES */
+doc.setFontSize(9);
+doc.setFont("helvetica","normal");
+doc.text("SALVADOR ESQUER #301",w-20,h-50,{align:"right"});
+doc.text("DURANGO, DGO., MX",w-20,h-45,{align:"right"});
+
+/* LEYENDA */
+doc.setFontSize(8);
+doc.text("Este documento genera automáticamente al momento de solicitud. No es comprobante fiscal.",w/2,h-15,{align:"center"});
+
+doc.save("Comprobante_"+document.getElementById("previewNumero").textContent+".pdf");
 }
 
 function nextScreen(){
+
 if(isTransitioning)return;
 isTransitioning=true;
 
@@ -364,25 +445,25 @@ concepto=document.querySelector("#screen-concepto input").value;
 if(currentId==="screen-monto"){
 monto=document.querySelector("#screen-monto input").value;
 const montoFormateado=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(monto);
-const fecha=new Date();
-const fechaFormateada=fecha.toLocaleDateString('es-MX');
+const fecha=new Date().toLocaleDateString('es-MX');
 const numero=String(numeroComprobante).padStart(4,'0');
+
 document.getElementById("previewNombre").textContent=nombre;
 document.getElementById("previewProyecto").textContent=concepto;
 document.getElementById("previewMonto").textContent="$ "+montoFormateado;
-document.getElementById("previewFecha").textContent=fechaFormateada;
+document.getElementById("previewFecha").textContent=fecha;
 document.getElementById("previewNumero").textContent=numero;
+
 numeroComprobante++;
 }
 
 if(currentId==="premium"){
-setTimeout(async ()=>{
-await generarPDF();
-},300);
+setTimeout(()=>{generarPDF();},400);
 }
 
 currentIndex=(currentIndex+1)%screens.length;
 goTo(screens[currentIndex]);
+
 setTimeout(()=>{isTransitioning=false;},2500);
 }
 
