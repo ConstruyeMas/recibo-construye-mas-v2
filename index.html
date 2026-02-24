@@ -375,8 +375,10 @@ document.getElementById("previewNumero").textContent=numero;
 numeroComprobante++;
 }
 
-if(currentId==="screen-emitir"){
-setTimeout(()=>{generarPDF();},400);
+if(currentId==="premium"){
+setTimeout(async ()=>{
+await generarPDF();
+},300);
 }
 
 currentIndex=(currentIndex+1)%screens.length;
