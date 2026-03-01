@@ -14,204 +14,108 @@
 
 <style>
 
-/* RESET */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+html,body{height:100%;background:#000;}
+body{overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
+
+#splashScreen{
+position:fixed;inset:0;
+background:url('assets/img/splash.png') center/cover no-repeat;
+display:flex;align-items:center;justify-content:center;
+z-index:9999;
 }
 
-html, body {
-    height: 100%;
-    background: #000;
+.logoSplash{opacity:0;transform:scale(0.9);animation:logoFade 2s ease forwards;}
+.logoSplash img{width:260px;}
+@keyframes logoFade{to{opacity:1;transform:scale(1);}}
+
+.screen{
+position:fixed;inset:0;min-height:100dvh;
+display:flex;align-items:center;justify-content:center;
+flex-direction:column;background-size:cover;background-position:center;
+opacity:0;transform:translateY(20px);pointer-events:none;
+transition:opacity 2.5s cubic-bezier(0.22,1,0.36,1),
+transform 2.5s cubic-bezier(0.22,1,0.36,1);
 }
 
-body {
-    overflow: hidden;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+.screen.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);}
+
+.content{
+position:relative;z-index:2;width:100%;max-width:400px;
+padding:20px;height:100%;display:flex;flex-direction:column;
 }
 
-/* SPLASH */
-#splashScreen {
-    position: fixed;
-    inset: 0;
-    background: url('assets/img/splash.png') center/cover no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+.form-center{flex:1;display:flex;align-items:center;justify-content:center;}
+
+.input-premium{
+width:100%;padding:16px;border-radius:12px;
+border:1px solid rgba(255,255,255,0.3);
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+color:white;font-size:22px;
+outline:none;text-align:center;
 }
 
-.logoSplash {
-    opacity: 0;
-    transform: scale(0.9);
-    animation: logoFade 2s ease forwards;
+.slider-container{width:100%;margin-bottom:35px;}
+.slider-track{
+width:75%;height:60px;margin:0 auto;
+background:rgba(255,255,255,0.05);
+border-radius:50px;position:relative;overflow:hidden;
+backdrop-filter:blur(8px);
 }
 
-.logoSplash img { width: 260px; }
-
-@keyframes logoFade {
-    to { opacity: 1; transform: scale(1); }
+.slider-fill{
+position:absolute;left:0;top:0;height:100%;width:0%;
+background:rgba(255,255,255,0.08);
+border-radius:50px;transition:width 0.3s ease;
 }
 
-/* PANTALLAS */
-.screen {
-    position: fixed;
-    inset: 0;
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
-    transition: opacity 2.5s cubic-bezier(0.22,1,0.36,1),
-                transform 2.5s cubic-bezier(0.22,1,0.36,1);
+.slider-thumb{
+width:60px;height:60px;position:absolute;left:0;top:0;
+border-radius:50%;overflow:hidden;
+display:flex;align-items:center;justify-content:center;
+transition:left 0.35s cubic-bezier(0.22,1,0.36,1);
 }
 
-.screen.active {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+.slider-thumb img{width:100%;height:100%;object-fit:cover;}
+
+.slider-text{
+position:absolute;width:100%;height:100%;
+display:flex;align-items:center;justify-content:center;
+color:white;font-size:15px;
 }
 
-.overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-}
-
-.content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-center {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.input-premium {
-    width: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    color: white;
-    font-size: 22px;
-    outline: none;
-    text-align: center;
-}
-
-/* SLIDER */
-.slider-container {
-    width: 100%;
-    margin-bottom: 35px;
-}
-
-.slider-track {
-    width: 75%;
-    height: 60px;
-    margin: 0 auto;
-    background: rgba(255,255,255,0.05);
-    border-radius: 50px;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(8px);
-}
-
-.slider-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0%;
-    background: rgba(255,255,255,0.08);
-    border-radius: 50px;
-    transition: width 0.3s ease;
-}
-
-.slider-thumb {
-    width: 60px;
-    height: 60px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: left 0.35s cubic-bezier(0.22,1,0.36,1);
-}
-
-.slider-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.slider-text {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 15px;
-}
-
-/* PREMIUM */
-#premium { background:#000; }
+#premium{background:#000;}
 
 .premium-card{
-    width:85%;
-    max-width:420px;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.08);
-    backdrop-filter:blur(12px);
-    border-radius:18px;
-    padding:30px;
-    text-align:center;
-    color:white;
-    z-index:2;
+width:85%;max-width:420px;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+backdrop-filter:blur(12px);
+border-radius:18px;padding:30px;text-align:center;color:white;z-index:2;
 }
 
-.premium-header h2 { font-weight:300; letter-spacing:2px; }
-.premium-header strong { font-weight:800; }
-.premium-header p { font-size:13px; opacity:.6; margin-top:4px; }
-.premium-body { margin-top:25px; }
-.premium-row { margin-bottom:18px; }
-.premium-row span { display:block; font-size:12px; opacity:.6; }
-.premium-row strong { font-size:18px; letter-spacing:1px; }
+.premium-header h2{font-weight:300;letter-spacing:2px;}
+.premium-header strong{font-weight:800;}
+.premium-header p{font-size:13px;opacity:.6;margin-top:4px;}
+
+.premium-body{margin-top:25px;}
+.premium-row{margin-bottom:18px;}
+.premium-row span{display:block;font-size:12px;opacity:.6;}
+.premium-row strong{font-size:18px;letter-spacing:1px;}
 
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
 <div id="splashScreen">
-    <div class="logoSplash">
-        <img src="assets/img/logo.png">
-    </div>
+<div class="logoSplash">
+<img src="assets/img/logo.png">
+</div>
 </div>
 
-<!-- NOMBRE -->
 <div class="screen active" id="screen-nombre" style="background-image:url('assets/img/fondo_nombre.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -222,7 +126,6 @@ body {
 </div>
 </div>
 
-<!-- CONCEPTO -->
 <div class="screen" id="screen-concepto" style="background-image:url('assets/img/fondo_concepto.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -233,18 +136,16 @@ body {
 </div>
 </div>
 
-<!-- MONTO -->
 <div class="screen" id="screen-monto" style="background-image:url('assets/img/fondo_monto.png');">
 <div class="overlay"></div>
 <div class="content">
 <div class="form-center">
-<input type="text" id="montoInput" class="input-premium" placeholder="$ 0">
+<input type="text" id="montoInput" class="input-premium" placeholder="$ 0.00">
 </div>
 <div class="slider-container"><div class="slider-track"><div class="slider-fill"></div><div class="slider-thumb"><img src="assets/img/icon-slide.png"></div></div></div>
 </div>
 </div>
 
-<!-- PREMIUM -->
 <div class="screen" id="premium">
 <div class="premium-card">
 <div class="premium-header">
@@ -265,7 +166,6 @@ body {
 </div>
 </div>
 
-<!-- EMITIR -->
 <div class="screen" id="screen-emitir" style="background-image:url('assets/img/fondo_emitir.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -274,7 +174,6 @@ body {
 </div>
 </div>
 
-<!-- CONFIRMACION -->
 <div class="screen" id="screen-confirmacion" style="background-image:url('assets/img/fondo_confirmacion.png');">
 <div class="overlay"></div>
 <div class="content">
@@ -290,56 +189,50 @@ body {
 
 <script>
 
-let currentIndex = 0;
-let isTransitioning = false;
+let currentIndex=0;
+let isTransitioning=false;
+let nombre="";
+let concepto="";
+let monto="";
 
-let nombre = "";
-let concepto = "";
-let monto = "";
-
-const screens = [
-"screen-nombre",
-"screen-concepto",
-"screen-monto",
-"premium",
-"screen-emitir",
-"screen-confirmacion"
-];
+const screens=["screen-nombre","screen-concepto","screen-monto","premium","screen-emitir","screen-confirmacion"];
 
 function formatMonto(value){
-value = value.replace(/\D/g,"");
-if(!value) return "$ 0";
 
-let millions = "";
-if(value.length > 6){
-millions = value.slice(0, value.length-6);
-value = value.slice(-6);
+value=value.replace(/[^\d.]/g,'');
+
+if(value.split('.').length>2){
+value=value.substring(0,value.length-1);
 }
 
-let thousands = value.slice(0, value.length-3);
-let hundreds = value.slice(-3);
+let parts=value.split(".");
+let integer=parts[0]||"0";
+let decimal=parts[1]?parts[1].slice(0,2):"";
 
-let formatted = "";
-
-if(millions){
-formatted += millions + "’";
+let millions="";
+if(integer.length>6){
+millions=integer.slice(0,integer.length-6);
+integer=integer.slice(-6);
 }
 
-if(thousands){
-formatted += thousands + ",";
-}
+let thousands=integer.slice(0,integer.length-3);
+let hundreds=integer.slice(-3);
 
-formatted += hundreds;
+let formatted="";
 
-return "$ " + formatted;
+if(millions){formatted+=millions+"’";}
+if(thousands){formatted+=thousands+",";}
+formatted+=hundreds;
+
+return "$ "+formatted+(decimal? "."+decimal:"");
 }
 
 document.addEventListener("DOMContentLoaded",function(){
 
-const montoInput = document.getElementById("montoInput");
+const montoInput=document.getElementById("montoInput");
 
 montoInput.addEventListener("input",function(){
-this.value = formatMonto(this.value);
+this.value=formatMonto(this.value);
 });
 
 setTimeout(()=>{
@@ -360,10 +253,10 @@ document.getElementById(id).classList.add("active");
 
 function nextScreen(){
 
-if(isTransitioning) return;
+if(isTransitioning)return;
 isTransitioning=true;
 
-const currentId = screens[currentIndex];
+const currentId=screens[currentIndex];
 
 if(currentId==="screen-nombre"){
 nombre=document.querySelector("#screen-nombre input").value;
@@ -384,7 +277,6 @@ currentIndex=(currentIndex+1)%screens.length;
 goTo(screens[currentIndex]);
 
 setTimeout(()=>{isTransitioning=false;},2500);
-
 }
 
 document.querySelectorAll(".slider-thumb").forEach(thumb=>{
@@ -402,22 +294,22 @@ if(!dragging)return;
 const max=track.offsetWidth-thumb.offsetWidth;
 currentX=Math.max(0,Math.min(e.touches[0].clientX-startX,max));
 thumb.style.left=currentX+"px";
-if(fill) fill.style.width=(currentX/max)*100+"%";
+if(fill)fill.style.width=(currentX/max)*100+"%";
 });
 
 thumb.addEventListener("touchend",()=>{
 const max=track.offsetWidth-thumb.offsetWidth;
 if(currentX>max*0.85){
 thumb.style.left=max+"px";
-if(fill) fill.style.width="100%";
+if(fill)fill.style.width="100%";
 nextScreen();
 setTimeout(()=>{
 thumb.style.left="0px";
-if(fill) fill.style.width="0%";
+if(fill)fill.style.width="0%";
 },2500);
 }else{
 thumb.style.left="0px";
-if(fill) fill.style.width="0%";
+if(fill)fill.style.width="0%";
 }
 dragging=false;
 currentX=0;
