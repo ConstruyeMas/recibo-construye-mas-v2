@@ -105,12 +105,14 @@ let monto="";
 
 const screens=["screen-nombre","screen-concepto","screen-monto","premium","screen-emitir","screen-confirmacion"];
 
-function formatMontoPreserveDot(value){
+function formatMonto(value){
 
 let cleaned=value.replace(/[^\d.]/g,'');
 
+if(cleaned==="") return "";
+
 let parts=cleaned.split('.');
-let integer=parts[0]||"0";
+let integer=parts[0];
 let decimal=parts.length>1?parts[1].slice(0,2):null;
 
 let millions="";
@@ -143,8 +145,8 @@ document.addEventListener("DOMContentLoaded",function(){
 const montoInput=document.getElementById("montoInput");
 
 montoInput.addEventListener("input",function(){
-let val=this.value;
-this.value=formatMontoPreserveDot(val);
+let formatted=formatMonto(this.value);
+this.value=formatted;
 });
 
 setTimeout(()=>{
@@ -181,34 +183,6 @@ currentIndex=(currentIndex+1)%screens.length;
 goTo(screens[currentIndex]);
 setTimeout(()=>{isTransitioning=false;},2500);
 }
-
-document.querySelectorAll(".slider-thumb").forEach(thumb=>{
-const track=thumb.parentElement;
-const fill=track.querySelector(".slider-fill");
-let startX=0,currentX=0,dragging=false;
-
-thumb.addEventListener("touchstart",e=>{dragging=true;startX=e.touches[0].clientX;});
-thumb.addEventListener("touchmove",e=>{
-if(!dragging)return;
-const max=track.offsetWidth-thumb.offsetWidth;
-currentX=Math.max(0,Math.min(e.touches[0].clientX-startX,max));
-thumb.style.left=currentX+"px";
-if(fill)fill.style.width=(currentX/max)*100+"%";
-});
-thumb.addEventListener("touchend",()=>{
-const max=track.offsetWidth-thumb.offsetWidth;
-if(currentX>max*0.85){
-thumb.style.left=max+"px";
-if(fill)fill.style.width="100%";
-nextScreen();
-setTimeout(()=>{thumb.style.left="0px";if(fill)fill.style.width="0%";},2500);
-}else{
-thumb.style.left="0px";
-if(fill)fill.style.width="0%";
-}
-dragging=false;currentX=0;
-});
-});
 
 </script>
 
