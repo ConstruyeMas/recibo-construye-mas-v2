@@ -12,11 +12,9 @@
 
 <title>Recibo Construye Más V2</title>
 
-<!-- jsPDF GLOBAL (compatible móvil) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.min.js"></script>
-
 <style>
 
+/* RESET */
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 html,body{height:100%;background:#000;}
 
@@ -26,6 +24,7 @@ padding-top:env(safe-area-inset-top);
 padding-bottom:env(safe-area-inset-bottom);
 }
 
+/* SPLASH */
 #splashScreen{
 position:fixed;
 inset:0;
@@ -43,11 +42,9 @@ animation:logoFade 2s ease forwards;
 }
 
 .logoSplash img{width:260px;}
-
 @keyframes logoFade{to{opacity:1;transform:scale(1);}}
 
 /* PANTALLAS */
-
 .screen{
 position:fixed;
 inset:0;
@@ -108,7 +105,6 @@ outline:none;
 }
 
 /* SLIDER */
-
 .slider-container{width:100%;margin-bottom:35px;}
 
 .slider-track{
@@ -165,13 +161,13 @@ font-size:15px;
 }
 
 /* PREMIUM */
-
 #premium{
 position:relative;
 background:#000;
 overflow:hidden;
 }
 
+/* WATERMARK AJUSTADA */
 .watermark{
 position:absolute;
 inset:0;
@@ -272,9 +268,11 @@ position:relative;
 
 <!-- PREMIUM -->
 <div class="screen" id="premium">
+
 <div class="watermark">
-<img src="assets/img/logo.png">
+<img src="assets/img/logo.png" alt="Construye Más">
 </div>
+
 <div class="premium-card">
 <div class="premium-header">
 <h2>Construye <strong>MÁS</strong></h2>
@@ -288,12 +286,14 @@ position:relative;
 <div class="premium-row"><span>No. Comprobante</span><strong id="previewNumero"></strong></div>
 </div>
 </div>
+
 <div class="slider-container">
 <div class="slider-track">
 <div class="slider-fill"></div>
 <div class="slider-thumb"><img src="assets/img/icon-slide.png"></div>
 </div>
 </div>
+
 </div>
 
 <!-- EMITIR -->
@@ -335,57 +335,61 @@ position:relative;
 
 let currentIndex=0;
 let isTransitioning=false;
+
 let nombre="";
 let concepto="";
 let monto="";
 let numeroComprobante=1;
 
-const screens=["screen-nombre","screen-concepto","screen-monto","premium","screen-emitir","screen-confirmacion"];
+const screens=[
+"screen-nombre",
+"screen-concepto",
+"screen-monto",
+"premium",
+"screen-emitir",
+"screen-confirmacion"
+];
 
 function goTo(id){
 document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
-/* MOTOR PDF SIMPLE Y FUNCIONAL */
-
-function generarPDF(){
-
-const doc = new jsPDF("p","mm","letter");
-
-const w = doc.internal.pageSize.getWidth();
-
-doc.setFont("helvetica","bold");
-doc.setFontSize(20);
-doc.text("CONSTRUYE MÁS",20,30);
-
-doc.setFontSize(16);
-doc.text("COMPROBANTE DE PAGO",w/2,60,{align:"center"});
-
-doc.setFontSize(28);
-doc.text(document.getElementById("previewMonto").textContent,w/2,100,{align:"center"});
-
-doc.save("Comprobante_"+document.getElementById("previewNumero").textContent+".pdf");
-}
-
 function nextScreen(){
-
 if(isTransitioning)return;
 isTransitioning=true;
 
 const currentId=screens[currentIndex];
 
-if(currentId==="screen-monto"){
-monto=document.querySelector("#screen-monto input").value;
-const montoFormateado=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(monto);
-const numero=String(numeroComprobante).padStart(4,'0');
-document.getElementById("previewMonto").textContent="$ "+montoFormateado;
-document.getElementById("previewNumero").textContent=numero;
-numeroComprobante++;
+if(currentId==="screen-nombre"){
+nombre=document.querySelector("#screen-nombre input").value;
 }
 
-if(currentId==="premium"){
-generarPDF();
+if(currentId==="screen-concepto"){
+concepto=document.querySelector("#screen-concepto input").value;
+}
+
+if(currentId==="screen-monto"){
+
+monto=document.querySelector("#screen-monto input").value;
+
+const montoFormateado=new Intl.NumberFormat('es-MX',{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}).format(monto);
+
+const fecha=new Date();
+const fechaFormateada=fecha.toLocaleDateString('es-MX');
+
+const numero=String(numeroComprobante).padStart(4,'0');
+
+document.getElementById("previewNombre").textContent=nombre;
+document.getElementById("previewProyecto").textContent=concepto;
+document.getElementById("previewMonto").textContent="$ "+montoFormateado;
+document.getElementById("previewFecha").textContent=fechaFormateada;
+document.getElementById("previewNumero").textContent=numero;
+
+numeroComprobante++;
 }
 
 currentIndex=(currentIndex+1)%screens.length;
@@ -410,7 +414,11 @@ const track=thumb.parentElement;
 const fill=track.querySelector(".slider-fill");
 let startX=0,currentX=0,dragging=false;
 
-thumb.addEventListener("touchstart",e=>{dragging=true;startX=e.touches[0].clientX;});
+thumb.addEventListener("touchstart",e=>{
+dragging=true;
+startX=e.touches[0].clientX;
+});
+
 thumb.addEventListener("touchmove",e=>{
 if(!dragging)return;
 const max=track.offsetWidth-thumb.offsetWidth;
@@ -418,13 +426,17 @@ currentX=Math.max(0,Math.min(e.touches[0].clientX-startX,max));
 thumb.style.left=currentX+"px";
 if(fill)fill.style.width=(currentX/max)*100+"%";
 });
+
 thumb.addEventListener("touchend",()=>{
 const max=track.offsetWidth-thumb.offsetWidth;
 if(currentX>max*0.85){
 thumb.style.left=max+"px";
 if(fill)fill.style.width="100%";
 nextScreen();
-setTimeout(()=>{thumb.style.left="0px";if(fill)fill.style.width="0%";},2500);
+setTimeout(()=>{
+thumb.style.left="0px";
+if(fill)fill.style.width="0%";
+},2500);
 }else{
 thumb.style.left="0px";
 if(fill)fill.style.width="0%";
