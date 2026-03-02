@@ -3,718 +3,662 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-title" content="Construye Más">
-    <link rel="apple-touch-icon" href="assets/img/icon-180.png">
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="Construye Más">
+<link rel="apple-touch-icon" href="assets/img/icon-180.png">
 
-    <title>Recibo Construye Más V2</title>
+<title>Recibo Construye Más V2</title>
 
-    <style>
+<style>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
 
-        html,
-        body {
-            height: 100%;
-            background: #000;
-        }
+html,body{
+height:100%;
+background:#000;
+}
 
-        body {
-            overflow: hidden;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+body{
+overflow:hidden;
+padding-top:env(safe-area-inset-top);
+padding-bottom:env(safe-area-inset-bottom);
+}
 
-        /* SPLASH */
+/* SPLASH */
+#splashScreen{
+position:fixed;
+inset:0;
+background:url('assets/img/splash.png') center/cover no-repeat;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
 
-        #splashScreen {
-            position: fixed;
-            inset: 0;
-            background: url('assets/img/splash.png') center/cover no-repeat;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
+.logoSplash{
+opacity:0;
+transform:scale(.9);
+animation:logoFade 2s ease forwards;
+}
 
-        .logoSplash {
-            opacity: 0;
-            transform: scale(.9);
-            animation: logoFade 2s ease forwards;
-        }
+.logoSplash img{
+width:400px;
+}
 
-        .logoSplash img {
-            width: 400px;
-        }
+@keyframes logoFade{
+to{
+opacity:1;
+transform:scale(1);
+}
+}
 
-        @keyframes logoFade {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+/* MULTIPANTALLA */
+.screen{
+position:fixed;
+inset:0;
+min-height:100dvh;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+background-size:cover;
+background-position:center;
+opacity:0;
+transform:translateY(20px);
+pointer-events:none;
+transition:
+opacity 2.5s cubic-bezier(0.22,1,0.36,1),
+transform 2.5s cubic-bezier(0.22,1,0.36,1);
+}
 
-        /* MULTIPANTALLA */
+.screen.active{
+opacity:1;
+transform:translateY(0);
+pointer-events:auto;
+}
 
-        .screen {
-            position: fixed;
-            inset: 0;
-            min-height: 100dvh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transform: translateY(20px);
-            pointer-events: none;
-            transition:
-                opacity 2.5s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 2.5s cubic-bezier(0.22, 1, 0.36, 1);
-        }
+.overlay{
+position:absolute;
+inset:0;
+background:rgba(0,0,0,.45);
+}
 
-        .screen.active {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
+.content{
+position:relative;
+z-index:2;
+width:100%;
+max-width:400px;
+padding:20px;
+height:100%;
+display:flex;
+flex-direction:column;
+}
 
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, .45);
-        }
+.form-center{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 
-        .content {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
+.input-premium{
+width:100%;
+padding:16px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,.3);
+background:rgba(255,255,255,.1);
+backdrop-filter:blur(10px);
+color:white;
+font-size:22px;
+outline:none;
+text-align:center;
+}
 
-        .form-center {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* SLIDER */
+.slider-container{
+width:100%;
+margin-bottom:35px;
+}
 
-        .input-premium {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, .3);
-            background: rgba(255, 255, 255, .1);
-            backdrop-filter: blur(10px);
-            color: white;
-            font-size: 22px;
-            outline: none;
-            text-align: center;
-        }
+.slider-track{
+width:75%;
+height:60px;
+margin:0 auto;
+background:rgba(255,255,255,.05);
+border-radius:50px;
+position:relative;
+overflow:hidden;
+backdrop-filter:blur(8px);
+}
 
-        /* SLIDER */
+.slider-fill{
+position:absolute;
+left:0;
+top:0;
+height:100%;
+width:0%;
+background:rgba(255,255,255,.08);
+border-radius:50px;
+transition:width .3s ease;
+}
 
-        .slider-container {
-            width: 100%;
-            margin-bottom: 35px;
-        }
+.slider-thumb{
+width:60px;
+height:60px;
+position:absolute;
+left:0;
+top:0;
+border-radius:50%;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:left .35s cubic-bezier(0.22,1,0.36,1);
+}
 
-        .slider-track {
-            width: 75%;
-            height: 60px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, .05);
-            border-radius: 50px;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(8px);
-        }
+.slider-thumb img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
 
-        .slider-fill {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 0%;
-            background: rgba(255, 255, 255, .08);
-            border-radius: 50px;
-            transition: width .3s ease;
-        }
+.slider-text{
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:15px;
+}
 
-        .slider-thumb {
-            width: 60px;
-            height: 60px;
-            position: absolute;
-            left: 0;
-            top: 0;
-            border-radius: 50%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: left .35s cubic-bezier(0.22, 1, 0.36, 1);
-        }
+/* PREMIUM */
+#premium{
+    background-image: url('assets/img/fondo_premium.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 
-        .slider-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.premium-card{
+width:85%;
+max-width:420px;
+background:rgba(255,255,255,.015);
+border:1px solid rgba(255,255,255,.09);
+backdrop-filter:blur(3px);
+border-radius:18px;
+padding:30px;
+text-align:center;
+color:white;
+z-index:2;
+}
 
-        .slider-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 15px;
-        }
+.premium-header h2{
+font-weight:300;
+letter-spacing:2px;
+}
 
-        /* PREMIUM */
+.premium-header strong{
+font-weight:800;
+}
 
-        #premium {
-            background-image: url('assets/img/fondo_premium.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
+.premium-header p{
+font-size:13px;
+opacity:.6;
+margin-top:4px;
+}
 
-        .premium-card {
-            width: 85%;
-            max-width: 420px;
-            background: rgba(255, 255, 255, .015);
-            border: 1px solid rgba(255, 255, 255, .09);
-            backdrop-filter: blur(3px);
-            border-radius: 18px;
-            padding: 30px;
-            text-align: center;
-            color: white;
-            z-index: 2;
-        }
+.premium-body{
+margin-top:25px;
+}
 
-        .premium-header h2 {
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
+.premium-row{
+margin-bottom:18px;
+}
 
-        .premium-header strong {
-            font-weight: 800;
-        }
+.premium-row span{
+display:block;
+font-size:12px;
+opacity:.6;
+}
 
-        .premium-header p {
-            font-size: 13px;
-            opacity: .6;
-            margin-top: 4px;
-        }
+.premium-row strong{
+font-size:18px;
+letter-spacing:1px;
+}
 
-        .premium-body {
-            margin-top: 25px;
-        }
+/* CONFIRMACION */
+.mensaje-confirmacion{
+text-align:center;
+color:black;
+}
 
-        .premium-row {
-            margin-bottom: 18px;
-        }
+.mensaje-confirmacion .linea1{
+font-size:26px;
+margin-bottom:8px;
+font-weight:700;
+}
 
-        .premium-row span {
-            display: block;
-            font-size: 12px;
-            opacity: .6;
-        }
+.mensaje-confirmacion .linea2{
+font-size:20px;
+letter-spacing:1px;
+font-weight:700;
+}
 
-        .premium-row strong {
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-
-        /* CONFIRMACION */
-
-        .mensaje-confirmacion {
-            text-align: center;
-            color: black;
-        }
-
-        .mensaje-confirmacion .linea1 {
-            font-size: 26px;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .mensaje-confirmacion .linea2 {
-            font-size: 20px;
-            letter-spacing: 1px;
-            font-weight: 700;
-        }
-
-    </style>
-
+</style>
 </head>
-
 <body>
-    <!-- Pantalla Nombre -->
-    <div class="screen active"
-         id="screen-nombre"
-         style="background-image:url('assets/img/fondo_nombre.png');">
 
-        <div class="overlay"></div>
+<div id="splashScreen">
+<div class="logoSplash">
+<img src="assets/img/logo.png" alt="Construye Más">
+</div>
+</div>
+<!-- Pantalla Nombre -->
+<div class="screen active" id="screen-nombre"
+style="background-image:url('assets/img/fondo_nombre.png');">
 
-        <div class="content">
+<div class="overlay"></div>
 
-            <div class="form-center">
-                <input type="text"
-                       class="input-premium"
-                       placeholder="Nombre completo">
-            </div>
+<div class="content">
 
-            <div class="slider-container">
-                <div class="slider-track">
-                    <div class="slider-fill"></div>
-                    <div class="slider-thumb">
-                        <img src="assets/img/icon-slide.png">
-                    </div>
-                </div>
-            </div>
+<div class="form-center">
+<input type="text"
+class="input-premium"
+placeholder="Nombre completo">
+</div>
 
-        </div>
-    </div>
-
-
-    <!-- Pantalla Concepto -->
-    <div class="screen"
-         id="screen-concepto"
-         style="background-image:url('assets/img/fondo_concepto.png');">
-
-        <div class="overlay"></div>
-
-        <div class="content">
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb">
+<img src="assets/img/icon-slide.png">
+</div>
+</div>
+</div>
 
-            <div class="form-center">
-                <input type="text"
-                       class="input-premium"
-                       placeholder="Nombre de la obra">
-            </div>
-
-            <div class="slider-container">
-                <div class="slider-track">
-                    <div class="slider-fill"></div>
-                    <div class="slider-thumb">
-                        <img src="assets/img/icon-slide.png">
-                    </div>
-                </div>
-            </div>
+</div>
+</div>
 
-        </div>
-    </div>
-
-
-    <!-- Pantalla Monto -->
-    <div class="screen"
-         id="screen-monto"
-         style="background-image:url('assets/img/fondo_monto.png');">
 
-        <div class="overlay"></div>
 
-        <div class="content">
+<!-- Pantalla Concepto -->
+<div class="screen" id="screen-concepto"
+style="background-image:url('assets/img/fondo_concepto.png');">
 
-            <div class="form-center">
-                <input type="text"
-                       id="montoInput"
-                       class="input-premium"
-                       placeholder="$ 0.00"
-                       inputmode="decimal">
-            </div>
+<div class="overlay"></div>
 
-            <div class="slider-container">
-                <div class="slider-track">
-                    <div class="slider-fill"></div>
-                    <div class="slider-thumb">
-                        <img src="assets/img/icon-slide.png">
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-
-    <!-- Pantalla Premium Preview -->
-    <div class="screen"
-         id="premium">
-
-        <div class="overlay"></div>
+<div class="content">
 
-        <div class="content">
+<div class="form-center">
+<input type="text"
+class="input-premium"
+placeholder="Nombre de la obra">
+</div>
 
-            <div class="form-center">
-                <div class="premium-card">
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb">
+<img src="assets/img/icon-slide.png">
+</div>
+</div>
+</div>
 
-                    <div class="premium-header">
-                        <h2>Construye <strong>MÁS</strong></h2>
-                        <p>Durango, Zona Norte</p>
-                    </div>
-
-                    <div class="premium-body">
-
-                        <div class="premium-row">
-                            <span>Cliente</span>
-                            <strong id="previewNombre"></strong>
-                        </div>
-
-                        <div class="premium-row">
-                            <span>Proyecto</span>
-                            <strong id="previewProyecto"></strong>
-                        </div>
-
-                        <div class="premium-row">
-                            <span>Monto</span>
-                            <strong id="previewMonto"></strong>
-                        </div>
+</div>
+</div>
 
-                    </div>
-                </div>
-            </div>
 
-            <div class="slider-container">
-                <div class="slider-track">
-                    <div class="slider-fill"></div>
-                    <div class="slider-thumb">
-                        <img src="assets/img/icon-slide.png">
-                    </div>
-                </div>
-            </div>
 
-        </div>
-    </div>
+<!-- Pantalla Monto -->
+<div class="screen" id="screen-monto"
+style="background-image:url('assets/img/fondo_monto.png');">
 
+<div class="overlay"></div>
 
-    <!-- Pantalla Emitir -->
-    <div class="screen"
-         id="screen-emitir"
-         style="background-image:url('assets/img/fondo_emitir.png');">
+<div class="content">
 
-        <div class="overlay"></div>
+<div class="form-center">
+<input type="text"
+id="montoInput"
+class="input-premium"
+placeholder="$ 0.00"
+inputmode="decimal">
+</div>
 
-        <div class="content">
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb">
+<img src="assets/img/icon-slide.png">
+</div>
+</div>
 
-            <div class="form-center"></div>
+</div>
+</div>
+</div>
 
-            <div class="slider-container">
-                <div class="slider-track">
-                    <div class="slider-fill"></div>
-                    <div class="slider-text">Emitir comprobante</div>
-                    <div class="slider-thumb">
-                        <img src="assets/img/icon-slide.png">
-                    </div>
-                </div>
-            </div>
 
-        </div>
-    </div>
 
+<!-- Pantalla Premium Preview -->
+<div class="screen" id="premium">
 
-    <!-- Pantalla Confirmación -->
-    <div class="screen"
-         id="screen-confirmacion"
-         style="background-image:url('assets/img/fondo_confirmacion.png');">
+<div class="overlay"></div>
 
-        <div class="overlay"></div>
+<div class="content">
 
-        <div class="content">
+<div class="form-center">
+<div class="premium-card">
+
+<div class="premium-header">
+<h2>Construye <strong>MÁS</strong></h2>
+<p>Durango, Zona Norte</p>
+</div>
+
+<div class="premium-body">
+
+<div class="premium-row">
+<span>Cliente</span>
+<strong id="previewNombre"></strong>
+</div>
+
+<div class="premium-row">
+<span>Proyecto</span>
+<strong id="previewProyecto"></strong>
+</div>
 
-            <div class="form-center">
-                <div class="mensaje-confirmacion">
-                    <div class="linea1">Comprobante Emitido</div>
-                    <div class="linea2">Ing. Campos</div>
-                </div>
-            </div>
+<div class="premium-row">
+<span>Monto</span>
+<strong id="previewMonto"></strong>
+</div>
 
-            <div class="slider-container">
-                <div class="slider-track">
-                    <div class="slider-fill"></div>
-                    <div class="slider-text">Hasta luego</div>
-                    <div class="slider-thumb">
-                        <img src="assets/img/icon-slide.png">
-                    </div>
-                </div>
-            </div>
+</div>
+</div>
+</div>
 
-        </div>
-    </div>
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-thumb">
+<img src="assets/img/icon-slide.png">
+</div>
+</div>
+</div>
 
+</div>
+</div>
 
-    <script>
 
-        let currentIndex = 0;
-        let isTransitioning = false;
-        let nombre = "";
-        let concepto = "";
-        let monto = "";
 
-        const screens = [
-            "screen-nombre",
-            "screen-concepto",
-            "screen-monto",
-            "premium",
-            "screen-emitir",
-            "screen-confirmacion"
-        ];
+<!-- Pantalla Emitir -->
+<div class="screen" id="screen-emitir"
+style="background-image:url('assets/img/fondo_emitir.png');">
 
-        document.addEventListener("DOMContentLoaded", function () {
+<div class="overlay"></div>
 
-            const montoInput = document.getElementById("montoInput");
+<div class="content">
 
-            montoInput.addEventListener("input", function () {
+<div class="form-center"></div>
 
-                let cleaned = this.value.replace(/[^\d.]/g, '');
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-text">Emitir comprobante</div>
+<div class="slider-thumb">
+<img src="assets/img/icon-slide.png">
+</div>
+</div>
+</div>
+
+</div>
+</div>
 
-                if (cleaned === "") {
-                    this.value = "";
-                    return;
-                }
+
+
+<!-- Pantalla Confirmación -->
+<div class="screen" id="screen-confirmacion"
+style="background-image:url('assets/img/fondo_confirmacion.png');">
+
+<div class="overlay"></div>
 
-                const parts = cleaned.split(".");
+<div class="content">
 
-                if (parts.length > 2) {
-                    cleaned = parts[0] + "." + parts[1];
-                }
+<div class="form-center">
+<div class="mensaje-confirmacion">
+<div class="linea1">Comprobante Emitido</div>
+<div class="linea2">Ing. Campos</div>
+</div>
+</div>
 
-                let [intPart, decPart] = cleaned.split(".");
+<div class="slider-container">
+<div class="slider-track">
+<div class="slider-fill"></div>
+<div class="slider-text">Hasta luego</div>
+<div class="slider-thumb">
+<img src="assets/img/icon-slide.png">
+</div>
+</div>
+</div>
 
-                if (decPart) {
-                    decPart = decPart.slice(0, 2);
-                }
+</div>
+</div>
+<script>
 
-                let millions = "";
+let currentIndex = 0;
+let isTransitioning = false;
+let nombre = "";
+let concepto = "";
+let monto = "";
 
-                if (intPart.length > 6) {
-                    millions = intPart.slice(0, intPart.length - 6);
-                    intPart = intPart.slice(-6);
-                }
+const screens = [
+"screen-nombre",
+"screen-concepto",
+"screen-monto",
+"premium",
+"screen-emitir",
+"screen-confirmacion"
+];
 
-                let thousands = intPart.slice(0, intPart.length - 3);
-                let hundreds = intPart.slice(-3);
+document.addEventListener("DOMContentLoaded", function () {
 
-                let formatted = "";
+const montoInput = document.getElementById("montoInput");
 
-                if (millions) formatted += millions + "’";
-                if (thousands) formatted += thousands + ",";
-                formatted += hundreds;
+montoInput.addEventListener("input", function () {
 
-                this.value =
-                    "$ " +
-                    formatted +
-                    (decPart !== undefined ? "." + decPart : "");
-            });
+let cleaned = this.value.replace(/[^\d.]/g, '');
 
-            setTimeout(() => {
+if (cleaned === "") {
+this.value = "";
+return;
+}
 
-                const splash = document.getElementById("splashScreen");
+const parts = cleaned.split(".");
+if (parts.length > 2) {
+cleaned = parts[0] + "." + parts[1];
+}
 
-                if (splash) {
-                    splash.style.transition = "opacity 2.5s ease";
-                    splash.style.opacity = "0";
+let [intPart, decPart] = cleaned.split(".");
 
-                    setTimeout(() => {
-                        splash.remove();
-                    }, 2500);
-                }
+if (decPart) {
+decPart = decPart.slice(0, 2);
+}
 
-            }, 3500);
+let millions = "";
+if (intPart.length > 6) {
+millions = intPart.slice(0, intPart.length - 6);
+intPart = intPart.slice(-6);
+}
 
-        });
+let thousands = intPart.slice(0, intPart.length - 3);
+let hundreds = intPart.slice(-3);
 
+let formatted = "";
+if (millions) formatted += millions + "’";
+if (thousands) formatted += thousands + ",";
+formatted += hundreds;
 
-        function goTo(id) {
+this.value = "$ " + formatted + (decPart !== undefined ? "." + decPart : "");
+});
 
-            document
-                .querySelectorAll(".screen")
-                .forEach(s => s.classList.remove("active"));
+setTimeout(() => {
+const splash = document.getElementById("splashScreen");
+if (splash) {
+splash.style.transition = "opacity 2.5s ease";
+splash.style.opacity = "0";
+setTimeout(() => splash.remove(), 2500);
+}
+}, 3500);
 
-            document
-                .getElementById(id)
-                .classList.add("active");
-        }
+});
 
+function goTo(id) {
+document.querySelectorAll(".screen")
+.forEach(s => s.classList.remove("active"));
 
-        function nextScreen() {
+document.getElementById(id)
+.classList.add("active");
+}
 
-            if (isTransitioning) return;
+function nextScreen() {
 
-            isTransitioning = true;
+if (isTransitioning) return;
 
-            const currentId = screens[currentIndex];
+isTransitioning = true;
 
-            if (currentId === "screen-nombre") {
-                nombre = document
-                    .querySelector("#screen-nombre input")
-                    .value;
-            }
+const currentId = screens[currentIndex];
 
-            if (currentId === "screen-concepto") {
-                concepto = document
-                    .querySelector("#screen-concepto input")
-                    .value;
-            }
+if (currentId === "screen-nombre") {
+nombre = document.querySelector("#screen-nombre input").value;
+}
 
-            if (currentId === "screen-monto") {
+if (currentId === "screen-concepto") {
+concepto = document.querySelector("#screen-concepto input").value;
+}
 
-                monto = document
-                    .getElementById("montoInput")
-                    .value;
+if (currentId === "screen-monto") {
+monto = document.getElementById("montoInput").value;
+document.getElementById("previewNombre").textContent = nombre;
+document.getElementById("previewProyecto").textContent = concepto;
+document.getElementById("previewMonto").textContent = monto;
+}
 
-                document
-                    .getElementById("previewNombre")
-                    .textContent = nombre;
+if (currentIndex === screens.length - 1) {
+restartFlow();
+return;
+}
 
-                document
-                    .getElementById("previewProyecto")
-                    .textContent = concepto;
+currentIndex++;
+goTo(screens[currentIndex]);
 
-                document
-                    .getElementById("previewMonto")
-                    .textContent = monto;
-            }
+setTimeout(() => {
+isTransitioning = false;
+}, 2500);
 
-            if (currentIndex === screens.length - 1) {
-                restartFlow();
-                return;
-            }
+}
 
-            currentIndex++;
-            goTo(screens[currentIndex]);
+function restartFlow() {
 
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 2500);
-        }
+nombre = "";
+concepto = "";
+monto = "";
 
+document.querySelectorAll("input").forEach(i => i.value = "");
 
-        function restartFlow() {
+currentIndex = 0;
 
-            nombre = "";
-            concepto = "";
-            monto = "";
+const splash = document.createElement("div");
+splash.id = "splashScreen";
+splash.innerHTML = `
+<div class="logoSplash">
+<img src="assets/img/logo.png">
+</div>
+`;
 
-            document
-                .querySelectorAll("input")
-                .forEach(i => i.value = "");
+document.body.appendChild(splash);
 
-            currentIndex = 0;
+setTimeout(() => {
+splash.style.transition = "opacity 2.5s ease";
+splash.style.opacity = "0";
+setTimeout(() => splash.remove(), 2500);
+}, 3500);
 
-            const splash = document.createElement("div");
-            splash.id = "splashScreen";
+goTo("screen-nombre");
+isTransitioning = false;
+}
 
-            splash.innerHTML = `
-                <div class="logoSplash">
-                    <img src="assets/img/logo.png">
-                </div>
-            `;
+document.querySelectorAll(".slider-thumb").forEach(thumb => {
 
-            document.body.appendChild(splash);
+const track = thumb.parentElement;
+const fill = track.querySelector(".slider-fill");
 
-            setTimeout(() => {
+let startX = 0;
+let currentX = 0;
+let dragging = false;
 
-                splash.style.transition = "opacity 2.5s ease";
-                splash.style.opacity = "0";
+thumb.addEventListener("touchstart", e => {
+dragging = true;
+startX = e.touches[0].clientX;
+});
 
-                setTimeout(() => {
-                    splash.remove();
-                }, 2500);
+thumb.addEventListener("touchmove", e => {
 
-            }, 3500);
+if (!dragging) return;
 
-            goTo("screen-nombre");
-            isTransitioning = false;
-        }
+const max = track.offsetWidth - thumb.offsetWidth;
 
+currentX = Math.max(
+0,
+Math.min(e.touches[0].clientX - startX, max)
+);
 
-        document
-            .querySelectorAll(".slider-thumb")
-            .forEach(thumb => {
+thumb.style.left = currentX + "px";
 
-                const track = thumb.parentElement;
-                const fill = track.querySelector(".slider-fill");
+if (fill) {
+fill.style.width = (currentX / max) * 100 + "%";
+}
 
-                let startX = 0;
-                let currentX = 0;
-                let dragging = false;
+});
 
-                thumb.addEventListener("touchstart", e => {
-                    dragging = true;
-                    startX = e.touches[0].clientX;
-                });
+thumb.addEventListener("touchend", () => {
 
-                thumb.addEventListener("touchmove", e => {
+const max = track.offsetWidth - thumb.offsetWidth;
 
-                    if (!dragging) return;
+if (currentX > max * 0.85) {
 
-                    const max =
-                        track.offsetWidth - thumb.offsetWidth;
+thumb.style.left = max + "px";
+if (fill) fill.style.width = "100%";
 
-                    currentX = Math.max(
-                        0,
-                        Math.min(
-                            e.touches[0].clientX - startX,
-                            max
-                        )
-                    );
+nextScreen();
 
-                    thumb.style.left = currentX + "px";
+setTimeout(() => {
+thumb.style.left = "0px";
+if (fill) fill.style.width = "0%";
+}, 2500);
 
-                    if (fill) {
-                        fill.style.width =
-                            (currentX / max) * 100 + "%";
-                    }
+} else {
 
-                });
+thumb.style.left = "0px";
+if (fill) fill.style.width = "0%";
+}
 
-                thumb.addEventListener("touchend", () => {
+dragging = false;
+currentX = 0;
 
-                    const max =
-                        track.offsetWidth - thumb.offsetWidth;
+});
 
-                    if (currentX > max * 0.85) {
+});
 
-                        thumb.style.left = max + "px";
-
-                        if (fill) fill.style.width = "100%";
-
-                        nextScreen();
-
-                        setTimeout(() => {
-                            thumb.style.left = "0px";
-                            if (fill) fill.style.width = "0%";
-                        }, 2500);
-
-                    } else {
-
-                        thumb.style.left = "0px";
-                        if (fill) fill.style.width = "0%";
-                    }
-
-                    dragging = false;
-                    currentX = 0;
-                });
-
-            });
-
-    </script>
+</script>
 
 </body>
-
 </html>
