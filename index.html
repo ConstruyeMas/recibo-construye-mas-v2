@@ -3,196 +3,718 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000000">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-title" content="Construye Más">
-<link rel="apple-touch-icon" href="assets/img/icon-180.png">
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-title" content="Construye Más">
+    <link rel="apple-touch-icon" href="assets/img/icon-180.png">
 
-<title>Recibo Construye Más V2</title>
+    <title>Recibo Construye Más V2</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
 
-<style>
-/* ======= TODO TU CSS ORIGINAL SIN CAMBIOS ======= */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-html,body{height:100%;background:#000;}
-body{overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
-/* SPLASH */
-#splashScreen{position:fixed;inset:0;background:url('assets/img/splash.png') center/cover no-repeat;display:flex;align-items:center;justify-content:center;z-index:9999;}
-.logoSplash{opacity:0;transform:scale(.9);animation:logoFade 2s ease forwards;}
-.logoSplash img{width:400px;}
-@keyframes logoFade{to{opacity:1;transform:scale(1);}}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-/* MULTIPANTALLA */
-.screen{position:fixed;inset:0;min-height:100dvh;display:flex;align-items:center;justify-content:center;flex-direction:column;background-size:cover;background-position:center;opacity:0;transform:translateY(20px);pointer-events:none;transition:opacity 2.5s cubic-bezier(0.22,1,0.36,1),transform 2.5s cubic-bezier(0.22,1,0.36,1);}
-.screen.active{opacity:1;transform:translateY(0);pointer-events:auto;}
-.overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);}
-.content{position:relative;z-index:2;width:100%;max-width:400px;padding:20px;height:100%;display:flex;flex-direction:column;}
-.form-center{flex:1;display:flex;align-items:center;justify-content:center;}
-.input-premium{width:100%;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);backdrop-filter:blur(10px);color:white;font-size:22px;outline:none;text-align:center;}
-.slider-container{width:100%;margin-bottom:35px;}
-.slider-track{width:75%;height:60px;margin:0 auto;background:rgba(255,255,255,.05);border-radius:50px;position:relative;overflow:hidden;backdrop-filter:blur(8px);}
-.slider-fill{position:absolute;left:0;top:0;height:100%;width:0%;background:rgba(255,255,255,.08);border-radius:50px;transition:width .3s ease;}
-.slider-thumb{width:60px;height:60px;position:absolute;left:0;top:0;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:left .35s cubic-bezier(0.22,1,0.36,1);}
-.slider-thumb img{width:100%;height:100%;object-fit:cover;}
-.slider-text{position:absolute;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;}
-#premium{background-image:url('assets/img/fondo_premium.png');background-size:cover;background-position:center;background-repeat:no-repeat;}
-.premium-card{width:85%;max-width:420px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(3px);border-radius:18px;padding:30px;text-align:center;color:white;z-index:2;}
-.premium-header h2{font-weight:300;letter-spacing:2px;}
-.premium-header strong{font-weight:800;}
-.premium-header p{font-size:13px;opacity:.6;margin-top:4px;}
-.premium-body{margin-top:25px;}
-.premium-row{margin-bottom:18px;}
-.premium-row span{display:block;font-size:12px;opacity:.6;}
-.premium-row strong{font-size:18px;letter-spacing:1px;}
-.mensaje-confirmacion{text-align:center;color:black;}
-.mensaje-confirmacion .linea1{font-size:26px;margin-bottom:8px;font-weight:700;}
-.mensaje-confirmacion .linea2{font-size:20px;letter-spacing:1px;font-weight:700;}
-</style>
+        html,
+        body {
+            height: 100%;
+            background: #000;
+        }
+
+        body {
+            overflow: hidden;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* SPLASH */
+
+        #splashScreen {
+            position: fixed;
+            inset: 0;
+            background: url('assets/img/splash.png') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .logoSplash {
+            opacity: 0;
+            transform: scale(.9);
+            animation: logoFade 2s ease forwards;
+        }
+
+        .logoSplash img {
+            width: 400px;
+        }
+
+        @keyframes logoFade {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* MULTIPANTALLA */
+
+        .screen {
+            position: fixed;
+            inset: 0;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition:
+                opacity 2.5s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 2.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .screen.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-premium {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .3);
+            background: rgba(255, 255, 255, .1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 22px;
+            outline: none;
+            text-align: center;
+        }
+
+        /* SLIDER */
+
+        .slider-container {
+            width: 100%;
+            margin-bottom: 35px;
+        }
+
+        .slider-track {
+            width: 75%;
+            height: 60px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 50px;
+            transition: width .3s ease;
+        }
+
+        .slider-thumb {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: left .35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .slider-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 15px;
+        }
+
+        /* PREMIUM */
+
+        #premium {
+            background-image: url('assets/img/fondo_premium.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .premium-card {
+            width: 85%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, .015);
+            border: 1px solid rgba(255, 255, 255, .09);
+            backdrop-filter: blur(3px);
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+            z-index: 2;
+        }
+
+        .premium-header h2 {
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .premium-header strong {
+            font-weight: 800;
+        }
+
+        .premium-header p {
+            font-size: 13px;
+            opacity: .6;
+            margin-top: 4px;
+        }
+
+        .premium-body {
+            margin-top: 25px;
+        }
+
+        .premium-row {
+            margin-bottom: 18px;
+        }
+
+        .premium-row span {
+            display: block;
+            font-size: 12px;
+            opacity: .6;
+        }
+
+        .premium-row strong {
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+
+        /* CONFIRMACION */
+
+        .mensaje-confirmacion {
+            text-align: center;
+            color: black;
+        }
+
+        .mensaje-confirmacion .linea1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .mensaje-confirmacion .linea2 {
+            font-size: 20px;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+    </style>
+
 </head>
 
 <body>
+    <!-- Pantalla Nombre -->
+    <div class="screen active"
+         id="screen-nombre"
+         style="background-image:url('assets/img/fondo_nombre.png');">
 
-<!-- ======= TODO TU HTML ORIGINAL SIN CAMBIOS ======= -->
-<!-- (Se mantiene exactamente igual) -->
+        <div class="overlay"></div>
 
-<script>
+        <div class="content">
 
-const { jsPDF } = window.jspdf;
+            <div class="form-center">
+                <input type="text"
+                       class="input-premium"
+                       placeholder="Nombre completo">
+            </div>
 
-let currentIndex = 0;
-let isTransitioning = false;
-let nombre = "";
-let concepto = "";
-let monto = "";
+            <div class="slider-container">
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-thumb">
+                        <img src="assets/img/icon-slide.png">
+                    </div>
+                </div>
+            </div>
 
-let pdfFileGenerado = null;
-let emisionHabilitada = false;
+        </div>
+    </div>
 
-const screens = [
-"screen-nombre",
-"screen-concepto",
-"screen-monto",
-"premium",
-"screen-emitir",
-"screen-confirmacion"
-];
 
-/* ====== MODULO PDF ====== */
+    <!-- Pantalla Concepto -->
+    <div class="screen"
+         id="screen-concepto"
+         style="background-image:url('assets/img/fondo_concepto.png');">
 
-function obtenerFechaHoraFormal(){
-  const ahora=new Date();
-  const dias=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
-  const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-  let minutos=ahora.getMinutes();
-  if(minutos<10)minutos="0"+minutos;
-  return{
-    fechaLarga:`${dias[ahora.getDay()]}, ${ahora.getDate()} de ${meses[ahora.getMonth()]} de ${ahora.getFullYear()}`,
-    fechaCorta:`${String(ahora.getDate()).padStart(2,'0')}${String(ahora.getMonth()+1).padStart(2,'0')}${ahora.getFullYear()}`,
-    hora:`Hora: ${ahora.getHours()}:${minutos} hrs`
-  };
-}
+        <div class="overlay"></div>
 
-function limpiarNombreArchivo(n){
-  return n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,"").substring(0,25);
-}
+        <div class="content">
 
-function generarReferencia(){
-  return "TC"+Date.now().toString().slice(-7);
-}
+            <div class="form-center">
+                <input type="text"
+                       class="input-premium"
+                       placeholder="Nombre de la obra">
+            </div>
 
-async function construirPDF(){
-  if(pdfFileGenerado)return pdfFileGenerado;
+            <div class="slider-container">
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-thumb">
+                        <img src="assets/img/icon-slide.png">
+                    </div>
+                </div>
+            </div>
 
-  const {fechaLarga,fechaCorta,hora}=obtenerFechaHoraFormal();
-  const referencia=generarReferencia();
+        </div>
+    </div>
 
-  const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"letter"});
-  doc.setFont("helvetica");
-  doc.setFontSize(18);
-  doc.text("COMPROBANTE DE PAGO",105,30,{align:"center"});
-  doc.setFontSize(12);
-  doc.text(`Cliente: ${nombre||""}`,20,60);
-  doc.text(`Proyecto: ${concepto||""}`,20,70);
-  doc.text(`Monto: ${monto||""}`,20,80);
-  doc.text(`Referencia: ${referencia}`,20,100);
-  doc.text(fechaLarga,20,120);
-  doc.text(hora,20,130);
 
-  const blob=doc.output("blob");
-  const nombreArchivo=`CM_${referencia}_${limpiarNombreArchivo(nombre||"Cliente")}_${fechaCorta}.pdf`;
-  pdfFileGenerado=new File([blob],nombreArchivo,{type:"application/pdf"});
-  return pdfFileGenerado;
-}
+    <!-- Pantalla Monto -->
+    <div class="screen"
+         id="screen-monto"
+         style="background-image:url('assets/img/fondo_monto.png');">
 
-async function compartirPDF(){
-  try{
-    const archivo=await construirPDF();
-    if(navigator.canShare&&navigator.canShare({files:[archivo]})){
-      await navigator.share({files:[archivo],title:"Comprobante Construye Más"});
-      emisionHabilitada=true;
-    }else{
-      const url=URL.createObjectURL(archivo);
-      window.open(url,"_blank");
-      emisionHabilitada=true;
-    }
-  }catch(e){}
-}
+        <div class="overlay"></div>
 
-/* ====== TU LOGICA ORIGINAL INTACTA ====== */
+        <div class="content">
 
-function nextScreen(){
+            <div class="form-center">
+                <input type="text"
+                       id="montoInput"
+                       class="input-premium"
+                       placeholder="$ 0.00"
+                       inputmode="decimal">
+            </div>
 
-if(isTransitioning)return;
-isTransitioning=true;
+            <div class="slider-container">
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-thumb">
+                        <img src="assets/img/icon-slide.png">
+                    </div>
+                </div>
+            </div>
 
-const currentId=screens[currentIndex];
+        </div>
+    </div>
 
-if(currentId==="screen-emitir"&&!emisionHabilitada){
-  compartirPDF();
-  isTransitioning=false;
-  return;
-}
 
-if(currentId==="screen-nombre"){
-nombre=document.querySelector("#screen-nombre input").value;
-}
+    <!-- Pantalla Premium Preview -->
+    <div class="screen"
+         id="premium">
 
-if(currentId==="screen-concepto"){
-concepto=document.querySelector("#screen-concepto input").value;
-}
+        <div class="overlay"></div>
 
-if(currentId==="screen-monto"){
-monto=document.getElementById("montoInput").value;
-document.getElementById("previewNombre").textContent=nombre;
-document.getElementById("previewProyecto").textContent=concepto;
-document.getElementById("previewMonto").textContent=monto;
-}
+        <div class="content">
 
-if(currentIndex===screens.length-1){
-restartFlow();
-return;
-}
+            <div class="form-center">
+                <div class="premium-card">
 
-currentIndex++;
-goTo(screens[currentIndex]);
+                    <div class="premium-header">
+                        <h2>Construye <strong>MÁS</strong></h2>
+                        <p>Durango, Zona Norte</p>
+                    </div>
 
-setTimeout(()=>{isTransitioning=false;},2500);
-}
+                    <div class="premium-body">
 
-function restartFlow(){
-nombre="";concepto="";monto="";
-pdfFileGenerado=null;
-emisionHabilitada=false;
-currentIndex=0;
-goTo("screen-nombre");
-isTransitioning=false;
-}
+                        <div class="premium-row">
+                            <span>Cliente</span>
+                            <strong id="previewNombre"></strong>
+                        </div>
 
-</script>
+                        <div class="premium-row">
+                            <span>Proyecto</span>
+                            <strong id="previewProyecto"></strong>
+                        </div>
+
+                        <div class="premium-row">
+                            <span>Monto</span>
+                            <strong id="previewMonto"></strong>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-thumb">
+                        <img src="assets/img/icon-slide.png">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Pantalla Emitir -->
+    <div class="screen"
+         id="screen-emitir"
+         style="background-image:url('assets/img/fondo_emitir.png');">
+
+        <div class="overlay"></div>
+
+        <div class="content">
+
+            <div class="form-center"></div>
+
+            <div class="slider-container">
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-text">Emitir comprobante</div>
+                    <div class="slider-thumb">
+                        <img src="assets/img/icon-slide.png">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Pantalla Confirmación -->
+    <div class="screen"
+         id="screen-confirmacion"
+         style="background-image:url('assets/img/fondo_confirmacion.png');">
+
+        <div class="overlay"></div>
+
+        <div class="content">
+
+            <div class="form-center">
+                <div class="mensaje-confirmacion">
+                    <div class="linea1">Comprobante Emitido</div>
+                    <div class="linea2">Ing. Campos</div>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-text">Hasta luego</div>
+                    <div class="slider-thumb">
+                        <img src="assets/img/icon-slide.png">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+
+        let currentIndex = 0;
+        let isTransitioning = false;
+        let nombre = "";
+        let concepto = "";
+        let monto = "";
+
+        const screens = [
+            "screen-nombre",
+            "screen-concepto",
+            "screen-monto",
+            "premium",
+            "screen-emitir",
+            "screen-confirmacion"
+        ];
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const montoInput = document.getElementById("montoInput");
+
+            montoInput.addEventListener("input", function () {
+
+                let cleaned = this.value.replace(/[^\d.]/g, '');
+
+                if (cleaned === "") {
+                    this.value = "";
+                    return;
+                }
+
+                const parts = cleaned.split(".");
+
+                if (parts.length > 2) {
+                    cleaned = parts[0] + "." + parts[1];
+                }
+
+                let [intPart, decPart] = cleaned.split(".");
+
+                if (decPart) {
+                    decPart = decPart.slice(0, 2);
+                }
+
+                let millions = "";
+
+                if (intPart.length > 6) {
+                    millions = intPart.slice(0, intPart.length - 6);
+                    intPart = intPart.slice(-6);
+                }
+
+                let thousands = intPart.slice(0, intPart.length - 3);
+                let hundreds = intPart.slice(-3);
+
+                let formatted = "";
+
+                if (millions) formatted += millions + "’";
+                if (thousands) formatted += thousands + ",";
+                formatted += hundreds;
+
+                this.value =
+                    "$ " +
+                    formatted +
+                    (decPart !== undefined ? "." + decPart : "");
+            });
+
+            setTimeout(() => {
+
+                const splash = document.getElementById("splashScreen");
+
+                if (splash) {
+                    splash.style.transition = "opacity 2.5s ease";
+                    splash.style.opacity = "0";
+
+                    setTimeout(() => {
+                        splash.remove();
+                    }, 2500);
+                }
+
+            }, 3500);
+
+        });
+
+
+        function goTo(id) {
+
+            document
+                .querySelectorAll(".screen")
+                .forEach(s => s.classList.remove("active"));
+
+            document
+                .getElementById(id)
+                .classList.add("active");
+        }
+
+
+        function nextScreen() {
+
+            if (isTransitioning) return;
+
+            isTransitioning = true;
+
+            const currentId = screens[currentIndex];
+
+            if (currentId === "screen-nombre") {
+                nombre = document
+                    .querySelector("#screen-nombre input")
+                    .value;
+            }
+
+            if (currentId === "screen-concepto") {
+                concepto = document
+                    .querySelector("#screen-concepto input")
+                    .value;
+            }
+
+            if (currentId === "screen-monto") {
+
+                monto = document
+                    .getElementById("montoInput")
+                    .value;
+
+                document
+                    .getElementById("previewNombre")
+                    .textContent = nombre;
+
+                document
+                    .getElementById("previewProyecto")
+                    .textContent = concepto;
+
+                document
+                    .getElementById("previewMonto")
+                    .textContent = monto;
+            }
+
+            if (currentIndex === screens.length - 1) {
+                restartFlow();
+                return;
+            }
+
+            currentIndex++;
+            goTo(screens[currentIndex]);
+
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 2500);
+        }
+
+
+        function restartFlow() {
+
+            nombre = "";
+            concepto = "";
+            monto = "";
+
+            document
+                .querySelectorAll("input")
+                .forEach(i => i.value = "");
+
+            currentIndex = 0;
+
+            const splash = document.createElement("div");
+            splash.id = "splashScreen";
+
+            splash.innerHTML = `
+                <div class="logoSplash">
+                    <img src="assets/img/logo.png">
+                </div>
+            `;
+
+            document.body.appendChild(splash);
+
+            setTimeout(() => {
+
+                splash.style.transition = "opacity 2.5s ease";
+                splash.style.opacity = "0";
+
+                setTimeout(() => {
+                    splash.remove();
+                }, 2500);
+
+            }, 3500);
+
+            goTo("screen-nombre");
+            isTransitioning = false;
+        }
+
+
+        document
+            .querySelectorAll(".slider-thumb")
+            .forEach(thumb => {
+
+                const track = thumb.parentElement;
+                const fill = track.querySelector(".slider-fill");
+
+                let startX = 0;
+                let currentX = 0;
+                let dragging = false;
+
+                thumb.addEventListener("touchstart", e => {
+                    dragging = true;
+                    startX = e.touches[0].clientX;
+                });
+
+                thumb.addEventListener("touchmove", e => {
+
+                    if (!dragging) return;
+
+                    const max =
+                        track.offsetWidth - thumb.offsetWidth;
+
+                    currentX = Math.max(
+                        0,
+                        Math.min(
+                            e.touches[0].clientX - startX,
+                            max
+                        )
+                    );
+
+                    thumb.style.left = currentX + "px";
+
+                    if (fill) {
+                        fill.style.width =
+                            (currentX / max) * 100 + "%";
+                    }
+
+                });
+
+                thumb.addEventListener("touchend", () => {
+
+                    const max =
+                        track.offsetWidth - thumb.offsetWidth;
+
+                    if (currentX > max * 0.85) {
+
+                        thumb.style.left = max + "px";
+
+                        if (fill) fill.style.width = "100%";
+
+                        nextScreen();
+
+                        setTimeout(() => {
+                            thumb.style.left = "0px";
+                            if (fill) fill.style.width = "0%";
+                        }, 2500);
+
+                    } else {
+
+                        thumb.style.left = "0px";
+                        if (fill) fill.style.width = "0%";
+                    }
+
+                    dragging = false;
+                    currentX = 0;
+                });
+
+            });
+
+    </script>
 
 </body>
+
 </html>
