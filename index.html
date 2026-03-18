@@ -1,664 +1,999 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-title" content="Construye Más.">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-title" content="Construye Más">
-<link rel="apple-touch-icon" href="assets/img/icon-180.png">
-
-<title>Recibo Construye Más V2</title>
-
+<title>Construye Más. · Energías Limpias</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,'Segoe UI',system-ui,Arial,sans-serif}
+html,body{height:100%;background:#000;overflow:hidden;color:#f0f0f0}
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-html,body{
-height:100%;
-background:#000;
-}
-
-body{
-overflow:hidden;
-padding-top:env(safe-area-inset-top);
-padding-bottom:env(safe-area-inset-bottom);
-}
-
-/* SPLASH */
-#splashScreen{
-position:fixed;
-inset:0;
-background:url('assets/img/splash.png') center/cover no-repeat;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:9999;
-}
-
-.logoSplash{
-opacity:0;
-transform:scale(.9);
-animation:logoFade 2s ease forwards;
-}
-
-.logoSplash img{
-width:400px;
-}
-
-@keyframes logoFade{
-to{
-opacity:1;
-transform:scale(1);
-}
-}
-
-/* MULTIPANTALLA */
+/* ── SCREENS ── */
 .screen{
-position:fixed;
-inset:0;
-min-height:100dvh;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-background-size:cover;
-background-position:center;
-opacity:0;
-transform:translateY(20px);
-pointer-events:none;
-transition:
-opacity 2.5s cubic-bezier(0.22,1,0.36,1),
-transform 2.5s cubic-bezier(0.22,1,0.36,1);
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  opacity:0;transform:translateY(20px);
+  pointer-events:none;
+  transition:opacity 6s cubic-bezier(0.22,1,0.36,1),transform 6s cubic-bezier(0.22,1,0.36,1);
 }
+.screen.active{opacity:1;transform:translateY(0);pointer-events:auto}
 
-.screen.active{
-opacity:1;
-transform:translateY(0);
-pointer-events:auto;
-}
+/* ── BG IMAGES ── */
+#splash  {background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),url("assets/splash1.png") center/cover no-repeat}
+#cliente {background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("assets/cliente.png") center bottom/cover no-repeat}
+#recibo  {background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("assets/recibo.png") center/cover no-repeat}
+#analisis{background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("assets/analisis.png") center/cover no-repeat}
+#paneles {background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("assets/paneles.png") center/cover no-repeat}
+#cotizacion{background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("assets/cotizacion.png") center/cover no-repeat}
+#reporte {background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("assets/reporte.png") center/cover no-repeat}
 
-.overlay{
-position:absolute;
-inset:0;
-background:rgba(0,0,0,.45);
-}
-
+/* ── CONTENT ── */
 .content{
-position:relative;
-z-index:2;
-width:100%;
-max-width:400px;
-padding:20px;
-height:100%;
-display:flex;
-flex-direction:column;
+  width:90%;max-width:440px;
+  max-height:calc(100vh - 130px);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding-bottom:10px;
 }
 
-.form-center{
-flex:1;
-display:flex;
-align-items:center;
-justify-content:center;
+/* ── SCREEN TITLE ── */
+.stitle{
+  font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(255,255,255,0.4);
+  text-align:center;margin-bottom:14px;
 }
 
-.input-premium{
-width:100%;
-padding:16px;
-border-radius:12px;
-border:1px solid rgba(255,255,255,.3);
-background:rgba(255,255,255,.1);
-backdrop-filter:blur(10px);
-color:white;
-font-size:22px;
-outline:none;
-text-align:center;
+/* ── CARDS ── */
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:6px;padding:16px 18px;
+  margin-bottom:8px;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
 }
 
-/* SLIDER */
-.slider-container{
-width:100%;
-margin-bottom:35px;
+/* ── LABEL ── */
+.lbl{
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:rgba(255,255,255,0.4);
+  display:block;margin-bottom:5px;
 }
 
-.slider-track{
-width:75%;
-height:60px;
-margin:0 auto;
-background:rgba(255,255,255,.05);
-border-radius:50px;
-position:relative;
-overflow:hidden;
-backdrop-filter:blur(8px);
+/* ── KPI ── */
+.kval{font-size:24px;font-weight:700;letter-spacing:-0.5px;color:#fff;line-height:1}
+.ksub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px}
+.kval-sm{font-size:17px;font-weight:700;color:#fff;line-height:1}
+.kval-green{font-size:22px;font-weight:700;color:#7dffb3;line-height:1}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+
+/* ── INPUTS ── */
+input[type=text]{
+  width:100%;padding:13px 14px;margin-bottom:8px;
+  border-radius:7px;border:none;
+  background:rgba(255,255,255,0.08);
+  color:#fff;font-size:15px;text-align:center;
+}
+input[type=text]::placeholder{color:rgba(255,255,255,0.35)}
+
+/* ── RANGE SLIDERS ── */
+input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:4px;border-radius:2px;
+  background:rgba(255,255,255,0.15);
+  outline:none;cursor:pointer;
+  margin:10px 0 4px;border:none;padding:0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;
+  border-radius:50%;background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,0.55);cursor:pointer;
+}
+input[type=range]::-moz-range-thumb{
+  width:24px;height:24px;border-radius:50%;
+  background:#fff;border:none;cursor:pointer;
+}
+.rdisp{
+  font-size:28px;font-weight:700;color:#fff;
+  text-align:center;letter-spacing:-1px;margin-bottom:3px;
+}
+.rdisp span{font-size:13px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:3px}
+.rminmax{
+  display:flex;justify-content:space-between;
+  font-size:10px;color:rgba(255,255,255,0.3);
+  margin-top:2px;
 }
 
-.slider-fill{
-position:absolute;
-left:0;
-top:0;
-height:100%;
-width:0%;
-background:rgba(255,255,255,.08);
-border-radius:50px;
-transition:width .3s ease;
+/* ── PANEL OPTIONS ── */
+.popt{
+  width:100%;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:6px;padding:14px 16px;
+  margin-bottom:8px;cursor:pointer;
+  text-align:left;color:#f0f0f0;
+  font-family:inherit;
+  transition:border-color .2s,background .2s;
+}
+.popt:hover{border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.08)}
+.popt .ol{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.popt .ov{font-size:15px;font-weight:600;margin-top:3px}
+.popt .os{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px}
+
+/* ── BUTTONS ── */
+button{cursor:pointer;font-family:inherit;border:none;transition:opacity .15s,transform .1s}
+button:active{transform:scale(.97)}
+.btn-primary{display:block;width:100%;padding:13px;background:#fff;color:#111;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:4px;margin-top:6px}
+.btn-action{padding:10px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.65);font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;border-radius:4px;margin-top:6px}
+.btn-green{display:block;width:100%;padding:13px;background:#1a8a45;color:#fff;font-size:13px;border-radius:6px;margin-top:6px}
+.btn-cat{display:block;width:100%;padding:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);font-size:12px;border-radius:4px;margin-top:6px}
+
+/* ── NAV BAR ── */
+.nav-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:14px 20px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(transparent,rgba(0,0,0,.55));
+}
+.nav-back{
+  width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.1);border-radius:50%;
+  border:1px solid rgba(255,255,255,0.2);
+  color:#fff;font-size:17px;cursor:pointer;
+  flex-shrink:0;
+}
+.nav-back.invisible{visibility:hidden}
+.nav-spacer{width:42px;flex-shrink:0}
+
+/* ── TOUCH SLIDER ── */
+.strack-wrap{flex:1;display:flex;justify-content:center;padding:0 14px}
+.strack{
+  width:170px;height:52px;
+  background:rgba(0,0,0,0.35);border-radius:40px;
+  position:relative;
+  overflow:hidden;
+  touch-action:none;
+}
+.sthumb{
+  width:52px;height:52px;
+  background:rgb(0,0,0) url("assets/slide-icon1.png") center/95% no-repeat;
+  border-radius:50%;position:absolute;left:0;top:0;
+  box-shadow:0 4px 12px rgba(0,0,0,0.6);
+  touch-action:none;user-select:none;
 }
 
-.slider-thumb{
-width:60px;
-height:60px;
-position:absolute;
-left:0;
-top:0;
-border-radius:50%;
-overflow:hidden;
-display:flex;
-align-items:center;
-justify-content:center;
-transition:left .35s cubic-bezier(0.22,1,0.36,1);
-}
+/* ── QR ── */
+#qr{display:flex;justify-content:center;margin-top:8px}
+#driveStatus{font-size:12px;margin-top:6px;opacity:0.9}
+#pdfLink{font-size:12px;margin-top:4px}
 
-.slider-thumb img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
+/* ── REPORTE GRID ── */
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 
-.slider-text{
-position:absolute;
-width:100%;
-height:100%;
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-size:15px;
+/* ── SPLASH ── */
+.splash-logo{
+  width:120vw;max-width:1000px;opacity:0;
+  animation:sAppear 1.6s ease forwards;
 }
+@keyframes sAppear{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 
-/* PREMIUM */
-#premium{
-    background-image: url('assets/img/fondo_premium.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+/* ── CATÁLOGO MODAL ── */
+#catModal{
+  position:fixed;inset:0;background:rgba(0,0,0,0.94);
+  z-index:9000;display:none;flex-direction:column;
+  align-items:center;padding:22px 16px;overflow-y:auto;
 }
-
-.premium-card{
-width:85%;
-max-width:420px;
-background:rgba(255,255,255,.015);
-border:1px solid rgba(255,255,255,.09);
-backdrop-filter:blur(3px);
-border-radius:18px;
-padding:30px;
-text-align:center;
-color:white;
-z-index:2;
-}
-
-.premium-header h2{
-font-weight:300;
-letter-spacing:2px;
-}
-
-.premium-header strong{
-font-weight:800;
-}
-
-.premium-header p{
-font-size:13px;
-opacity:.6;
-margin-top:4px;
-}
-
-.premium-body{
-margin-top:25px;
-}
-
-.premium-row{
-margin-bottom:18px;
-}
-
-.premium-row span{
-display:block;
-font-size:12px;
-opacity:.6;
-}
-
-.premium-row strong{
-font-size:18px;
-letter-spacing:1px;
-}
-
-/* CONFIRMACION */
-.mensaje-confirmacion{
-text-align:center;
-color:black;
-}
-
-.mensaje-confirmacion .linea1{
-font-size:26px;
-margin-bottom:8px;
-font-weight:700;
-}
-
-.mensaje-confirmacion .linea2{
-font-size:20px;
-letter-spacing:1px;
-font-weight:700;
-}
-
+#catModal.open{display:flex}
+.cat-title{font-size:17px;font-weight:700;margin-bottom:3px}
+.cat-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:14px;text-align:center}
+.cat-sec{width:100%;max-width:440px;margin-bottom:10px}
+.cat-sec-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:7px}
+.cat-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px}
+.cat-row .ci{color:rgba(255,255,255,0.75);flex:1}
+.cat-row .cq{font-weight:700;color:#7dffb3;min-width:80px;text-align:right}
+.cat-row .cu{color:rgba(255,255,255,0.3);font-size:10px;min-width:38px;text-align:right;margin-left:5px}
+.cat-folio{font-size:10px;color:rgba(255,255,255,0.3);margin-top:10px;text-align:center}
+#closeCat{margin-top:18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:13px;padding:9px 22px;border-radius:4px;cursor:pointer}
 </style>
 </head>
 <body>
 
-<div id="splashScreen">
-<div class="logoSplash">
-<img src="assets/img/logo.png" alt="Construye Más">
-</div>
-</div>
-<!-- Pantalla Nombre -->
-<div class="screen active" id="screen-nombre"
-style="background-image:url('assets/img/fondo_nombre.png');">
-
-<div class="overlay"></div>
-
-<div class="content">
-
-<div class="form-center">
-<input type="text"
-class="input-premium"
-placeholder="Nombre completo">
+<!-- ══ SPLASH ══ -->
+<div class="screen active" id="splash">
+  <img src="assets/splash-intro.png" class="splash-logo" alt="">
 </div>
 
-<div class="slider-container">
-<div class="slider-track">
-<div class="slider-fill"></div>
-<div class="slider-thumb">
-<img src="assets/img/icon-slide.png">
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<!-- Pantalla Concepto -->
-<div class="screen" id="screen-concepto"
-style="background-image:url('assets/img/fondo_concepto.png');">
-
-<div class="overlay"></div>
-
-<div class="content">
-
-<div class="form-center">
-<input type="text"
-class="input-premium"
-placeholder="Nombre de la obra">
+<!-- ══ CLIENTE ══ -->
+<div class="screen" id="cliente">
+  <div class="content">
+    <div class="stitle">Datos del cliente</div>
+    <input type="text" id="nombre"   placeholder="Nombre del Cliente">
+    <input type="text" id="telefono" placeholder="Teléfono">
+    <input type="text" id="calle"    placeholder="Calle">
+    <input type="text" id="numero"   placeholder="Número">
+    <input type="text" id="colonia"  placeholder="Colonia">
+    <input type="text" id="cp"       placeholder="Código Postal">
+    <input type="text" id="ciudad"   placeholder="Ciudad">
+  </div>
+  <div class="nav-bar">
+    <div class="nav-back invisible">←</div>
+    <div class="strack-wrap"><div class="strack"><div class="sthumb"></div></div></div>
+    <div class="nav-spacer"></div>
+  </div>
 </div>
 
-<div class="slider-container">
-<div class="slider-track">
-<div class="slider-fill"></div>
-<div class="slider-thumb">
-<img src="assets/img/icon-slide.png">
-</div>
-</div>
-</div>
+<!-- ══ RECIBO ══ -->
+<div class="screen" id="recibo">
+  <div class="content">
+    <div class="stitle">Consumo eléctrico</div>
 
-</div>
-</div>
+    <div class="card">
+      <span class="lbl">Consumo bimestral</span>
+      <div class="rdisp" id="dConsumo">300 <span>kWh</span></div>
+      <input type="range" id="slConsumo" min="50" max="3000" step="25" value="300">
+      <div class="rminmax"><span>50 kWh</span><span>3,000 kWh</span></div>
+    </div>
 
+    <div class="card">
+      <span class="lbl">Pago bimestral</span>
+      <div class="rdisp" id="dPago">$900 <span>MXN</span></div>
+      <input type="range" id="slPago" min="100" max="15000" step="50" value="900">
+      <div class="rminmax"><span>$100</span><span>$15,000</span></div>
+    </div>
 
-
-<!-- Pantalla Monto -->
-<div class="screen" id="screen-monto"
-style="background-image:url('assets/img/fondo_monto.png');">
-
-<div class="overlay"></div>
-
-<div class="content">
-
-<div class="form-center">
-<input type="text"
-id="montoInput"
-class="input-premium"
-placeholder="$ 0.00"
-inputmode="decimal">
-</div>
-
-<div class="slider-container">
-<div class="slider-track">
-<div class="slider-fill"></div>
-<div class="slider-thumb">
-<img src="assets/img/icon-slide.png">
-</div>
+    <div class="card" style="padding:12px 16px">
+      <span class="lbl">Tarifa calculada automáticamente</span>
+      <div style="font-size:22px;font-weight:700;color:#fff" id="dTarifa">$3.00<span style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:3px">/kWh</span></div>
+      <div class="ksub">Ajusta cualquiera de los dos sliders · el otro se actualiza solo</div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="nav-back" onclick="prevScreen()">←</div>
+    <div class="strack-wrap"><div class="strack"><div class="sthumb"></div></div></div>
+    <div class="nav-spacer"></div>
+  </div>
 </div>
 
-</div>
-</div>
-</div>
-
-
-
-<!-- Pantalla Premium Preview -->
-<div class="screen" id="premium">
-
-<div class="overlay"></div>
-
-<div class="content">
-
-<div class="form-center">
-<div class="premium-card">
-
-<div class="premium-header">
-<h2>Construye <strong>MÁS</strong></h2>
-<p>Durango, Zona Norte</p>
-</div>
-
-<div class="premium-body">
-
-<div class="premium-row">
-<span>Cliente</span>
-<strong id="previewNombre"></strong>
+<!-- ══ ANÁLISIS ══ -->
+<div class="screen" id="analisis">
+  <div class="content">
+    <div class="stitle">Diagnóstico energético</div>
+    <div class="g2">
+      <div class="card"><span class="lbl">Consumo mensual</span><div class="kval" id="aConsM">—</div><div class="ksub">kWh</div></div>
+      <div class="card"><span class="lbl">Consumo anual</span><div class="kval" id="aConsA">—</div><div class="ksub">kWh</div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><span class="lbl">Sistema ideal</span><div class="kval" id="aSist">—</div><div class="ksub">kWp</div></div>
+      <div class="card"><span class="lbl">Radiación</span><div class="kval" id="aRad">—</div><div class="ksub">kWh/kW/año</div></div>
+    </div>
+    <div class="card">
+      <span class="lbl">Diagnóstico · eficiencia del sistema 85%</span>
+      <div style="font-size:17px;font-weight:700;color:#fff" id="aDiag">—</div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="nav-back" onclick="prevScreen()">←</div>
+    <div class="strack-wrap"><div class="strack"><div class="sthumb"></div></div></div>
+    <div class="nav-spacer"></div>
+  </div>
 </div>
 
-<div class="premium-row">
-<span>Proyecto</span>
-<strong id="previewProyecto"></strong>
+<!-- ══ PANELES ══ -->
+<div class="screen" id="paneles">
+  <div class="content">
+    <div class="stitle">Selecciona tu sistema</div>
+    <div id="panelOpts"></div>
+  </div>
+  <div class="nav-bar">
+    <div class="nav-back" onclick="prevScreen()">←</div>
+    <div class="strack-wrap" style="visibility:hidden"><div class="strack"><div class="sthumb"></div></div></div>
+    <div class="nav-spacer"></div>
+  </div>
 </div>
 
-<div class="premium-row">
-<span>Monto</span>
-<strong id="previewMonto"></strong>
+<!-- ══ COTIZACIÓN ══ -->
+<div class="screen" id="cotizacion">
+  <div class="content">
+    <div class="stitle">Tu cotización</div>
+    <div class="g2">
+      <div class="card"><span class="lbl">Sistema</span><div class="kval-sm" id="cPaneles">—</div><div class="ksub" id="cKwp">—</div></div>
+      <div class="card"><span class="lbl">Inversión total</span><div class="kval-sm" id="cInv">—</div><div class="ksub">precio de referencia</div></div>
+    </div>
+    <div class="g3">
+      <div class="card"><span class="lbl">Producción</span><div class="kval-sm" id="cProd">—</div><div class="ksub">kWh/año</div></div>
+      <div class="card"><span class="lbl">Cobertura</span><div class="kval-sm" id="cCob">—</div><div class="ksub">%</div></div>
+      <div class="card"><span class="lbl">Área</span><div class="kval-sm" id="cArea">—</div><div class="ksub">m²</div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><span class="lbl">Ahorro mensual</span><div class="kval-green" id="cAhorro">—</div></div>
+      <div class="card"><span class="lbl">Retorno</span><div class="kval-sm" id="cRetorno">—</div><div class="ksub">años</div></div>
+    </div>
+    <canvas id="grafica" style="margin-top:8px;background:rgba(0,0,0,0.35);border-radius:8px"></canvas>
+  </div>
+  <div class="nav-bar">
+    <div class="nav-back" onclick="prevScreen()">←</div>
+    <div class="strack-wrap"><div class="strack"><div class="sthumb"></div></div></div>
+    <div class="nav-spacer"></div>
+  </div>
 </div>
 
-</div>
-</div>
-</div>
-
-<div class="slider-container">
-<div class="slider-track">
-<div class="slider-fill"></div>
-<div class="slider-thumb">
-<img src="assets/img/icon-slide.png">
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<!-- Pantalla Emitir -->
-<div class="screen" id="screen-emitir"
-style="background-image:url('assets/img/fondo_emitir.png');">
-
-<div class="overlay"></div>
-
-<div class="content">
-
-<div class="form-center"></div>
-
-<div class="slider-container">
-<div class="slider-track">
-<div class="slider-fill"></div>
-<div class="slider-text">Emitir comprobante</div>
-<div class="slider-thumb">
-<img src="assets/img/icon-slide.png">
-</div>
-</div>
+<!-- ══ REPORTE ══ -->
+<div class="screen" id="reporte">
+  <div class="content">
+    <div class="stitle">Reporte final</div>
+    <div class="card">
+      <p id="rFolio"    style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:6px"></p>
+      <p id="rCliente"  style="font-size:15px;font-weight:700;margin-bottom:3px"></p>
+      <p id="rConsumo"  style="font-size:12px;color:rgba(255,255,255,0.55)"></p>
+      <p id="rDiag"     style="font-size:12px;color:rgba(255,255,255,0.55)"></p>
+      <p id="rSistema"  style="font-size:13px;font-weight:600;margin-top:7px"></p>
+      <p id="rArea"     style="font-size:12px;color:rgba(255,255,255,0.55)"></p>
+      <p id="rPrecio"   style="font-size:16px;font-weight:700;color:#7dffb3;margin-top:6px"></p>
+      <div id="qr"></div>
+      <p id="driveStatus"></p>
+      <input type="text" id="pdfLink" placeholder="Link de Google Drive" style="font-size:12px;margin-top:4px" autocomplete="off">
+    </div>
+    <div class="rep-grid">
+      <button class="btn-action" onclick="copiarLink()">Copiar link</button>
+      <button class="btn-action" onclick="generarPDF()">Generar PDF</button>
+    </div>
+    <button class="btn-green" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    <button class="btn-cat"   onclick="abrirCatalogo()">📋 Presupuesto interno</button>
+  </div>
+  <div class="nav-bar">
+    <div class="nav-back" onclick="prevScreen()">←</div>
+    <div class="strack-wrap" style="visibility:hidden"><div class="strack"><div class="sthumb"></div></div></div>
+    <div class="nav-spacer"></div>
+  </div>
 </div>
 
-</div>
+<!-- ══ MODAL CATÁLOGO INTERNO ══ -->
+<div id="catModal">
+  <div class="cat-title">PRESUPUESTO INTERNO</div>
+  <div class="cat-sub" id="catSub">— uso exclusivo Construye Más. —</div>
+
+  <div class="cat-sec">
+    <div class="cat-sec-title">Sistema Fotovoltaico</div>
+    <div class="cat-row"><span class="ci">Panel solar (selección)</span><span class="cq" id="catPan">—</span><span class="cu">pza</span></div>
+    <div class="cat-row"><span class="ci">Inversor de string</span><span class="cq" id="catInv">—</span><span class="cu">pza</span></div>
+    <div class="cat-row"><span class="ci">Estructura metálica aluminio</span><span class="cq" id="catEstr">—</span><span class="cu">kit</span></div>
+  </div>
+
+  <div class="cat-sec">
+    <div class="cat-sec-title">Cableado</div>
+    <div class="cat-row"><span class="ci">Cable solar Cal. 10 AWG (CC)</span><span class="cq" id="catC10">—</span><span class="cu">ml</span></div>
+    <div class="cat-row"><span class="ci">Cable THW Cal. 8 AWG (CA)</span><span class="cq" id="catC8">—</span><span class="cu">ml</span></div>
+    <div class="cat-row"><span class="ci">Cable tierra Cal. 10 AWG</span><span class="cq" id="catCT">—</span><span class="cu">ml</span></div>
+    <div class="cat-row"><span class="ci">Conduit EMT 1"</span><span class="cq" id="catCond">—</span><span class="cu">tramo 3m</span></div>
+  </div>
+
+  <div class="cat-sec">
+    <div class="cat-sec-title">Protecciones y Conectores</div>
+    <div class="cat-row"><span class="ci">Conectores MC4 (par)</span><span class="cq" id="catMC4">—</span><span class="cu">par</span></div>
+    <div class="cat-row"><span class="ci">Interruptor DC 1000V</span><span class="cq" id="catIDC">—</span><span class="cu">pza</span></div>
+    <div class="cat-row"><span class="ci">Interruptor AC 2P bidireccional</span><span class="cq" id="catIAC">—</span><span class="cu">pza</span></div>
+    <div class="cat-row"><span class="ci">Fusible DC 15A</span><span class="cq" id="catFus">—</span><span class="cu">pza</span></div>
+    <div class="cat-row"><span class="ci">Supresor de picos DC/AC</span><span class="cq">2</span><span class="cu">pza</span></div>
+  </div>
+
+  <div class="cat-sec">
+    <div class="cat-sec-title">Accesorios de Instalación</div>
+    <div class="cat-row"><span class="ci">Pernos gancho techo</span><span class="cq" id="catPern">—</span><span class="cu">pza</span></div>
+    <div class="cat-row"><span class="ci">Riel aluminio 40mm</span><span class="cq" id="catRiel">—</span><span class="cu">ml</span></div>
+    <div class="cat-row"><span class="ci">Abrazaderas de panel</span><span class="cq" id="catAbr">—</span><span class="cu">pza</span></div>
+    <div class="cat-row"><span class="ci">Caja combinadora</span><span class="cq" id="catComb">—</span><span class="cu">pza</span></div>
+  </div>
+
+  <div class="cat-sec">
+    <div class="cat-sec-title">Mano de Obra</div>
+    <div class="cat-row"><span class="ci">Instalación completa del sistema</span><span class="cq">1 global</span><span class="cu"></span></div>
+    <div class="cat-row"><span class="ci">Gestión CFE (interconexión)</span><span class="cq">1 global</span><span class="cu"></span></div>
+  </div>
+
+  <div class="cat-folio" id="catFol"></div>
+  <button id="closeCat" onclick="cerrarCatalogo()">Cerrar</button>
 </div>
 
-
-
-<!-- Pantalla Confirmación -->
-<div class="screen" id="screen-confirmacion"
-style="background-image:url('assets/img/fondo_confirmacion.png');">
-
-<div class="overlay"></div>
-
-<div class="content">
-
-<div class="form-center">
-<div class="mensaje-confirmacion">
-<div class="linea1">Comprobante Emitido</div>
-<div class="linea2">Ing. Campos</div>
-</div>
-</div>
-
-<div class="slider-container">
-<div class="slider-track">
-<div class="slider-fill"></div>
-<div class="slider-text">Hasta luego</div>
-<div class="slider-thumb">
-<img src="assets/img/icon-slide.png">
-</div>
-</div>
-</div>
-
-</div>
-</div>
 <script>
+/* ════════════════════════════════════════
+   CONFIG
+════════════════════════════════════════ */
+const DRIVE_CLIENT_ID = '329925517865-jgmugq1egglghkirrej6ljlaafomm5t4.apps.googleusercontent.com';
+const DRIVE_FOLDER_ID = '1tKhkO7yGcKwDgrbIfI3NHOSanJl8EeQE';
+const DRIVE_SCOPES    = 'https://www.googleapis.com/auth/drive.file';
+const EFI  = 0.85;   // eficiencia sistema
+const DEG  = 0.005;  // degradación anual panel
+const PDF_TEMPLATE_URL = 'assets/plantilla.png';
+const PDF_PAGE = {w:210,h:297};
+const PDF_LAYOUT = {
+  idTexto:   {x:158,y:24.2, size:12,   align:'left' },
+  fechaHora: {x:140,y:37.5, size:10,   align:'left' },
+  monto:     {x:195,y:205,  size:18,   align:'right'},
+  montoTexto:{x:195,y:213,  size:10.5, align:'right'},
+  folioAut:  {x:12, y:204,  size:15,   align:'left' },
+  qr:        {x:20, y:223,  size:40}
+};
+const PDF_REP = {col1X:20,col2X:145,startY:66,lh:5.8};
 
-let currentIndex = 0;
-let isTransitioning = false;
-let nombre = "";
-let concepto = "";
-let monto = "";
+/* ════════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
+let idx=0;
+const SCREENS=['splash','cliente','recibo','analisis','paneles','cotizacion','reporte'];
+let consumoBi,pagoBi,consumoMes,consumoAnual,costoKWH,sistemaKW;
+let radiacionSolar,diagnosticoTexto,folioCotizacion;
+let produccionAnual,coberturaConsumo,areaSistema,ahorroMensualGlobal,precioSistema;
+let catPan=0,catPot=0;
+let pdfLinkValue='',pdfTmplData=null,pdfTmplLoading=null;
+let pdfLinkEl,driveStatusEl;
+let driveTokenClient,driveAccessToken='',driveFileId='';
+let chartInst=null;
+let isLinkingSliders=false;
+const TARIFF_REF=3.0; // $/kWh referencia para vinculación
 
-const screens = [
-"screen-nombre",
-"screen-concepto",
-"screen-monto",
-"premium",
-"screen-emitir",
-"screen-confirmacion"
-];
-
-document.addEventListener("DOMContentLoaded", function () {
-
-const montoInput = document.getElementById("montoInput");
-
-montoInput.addEventListener("input", function () {
-
-let cleaned = this.value.replace(/[^\d.]/g, '');
-
-if (cleaned === "") {
-this.value = "";
-return;
+/* ════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════ */
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function nextScreen(){
+  idx++;
+  if(idx>=SCREENS.length){idx--;return;}
+  goTo(SCREENS[idx]);
+  if(SCREENS[idx]==='analisis') calcularSistema();
+  if(SCREENS[idx]==='reporte')  llenarReporte();
+}
+function prevScreen(){
+  if(idx<=1) return;
+  idx--;
+  goTo(SCREENS[idx]);
 }
 
-const parts = cleaned.split(".");
-if (parts.length > 2) {
-cleaned = parts[0] + "." + parts[1];
-}
+/* ════════════════════════════════════════
+   SWIPE NAVIGATION
+════════════════════════════════════════ */
+let swX=null,swY=null;
+document.addEventListener('touchstart',e=>{
+  if(e.target.closest('.strack')){swX=null;swY=null;return;}
+  swX=e.changedTouches[0].pageX;swY=e.changedTouches[0].pageY;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(swX===null) return;
+  const dx=e.changedTouches[0].pageX-swX;
+  const dy=e.changedTouches[0].pageY-swY;
+  if(Math.abs(dx)>65 && Math.abs(dx)>Math.abs(dy)*1.5){
+    if(SCREENS[idx]==='paneles'){swX=null;return;} // paneles se selecciona con tap
+    if(dx<0) nextScreen(); else prevScreen();
+  }
+  swX=null;swY=null;
+},{passive:true});
 
-let [intPart, decPart] = cleaned.split(".");
-
-if (decPart) {
-decPart = decPart.slice(0, 2);
-}
-
-let millions = "";
-if (intPart.length > 6) {
-millions = intPart.slice(0, intPart.length - 6);
-intPart = intPart.slice(-6);
-}
-
-let thousands = intPart.slice(0, intPart.length - 3);
-let hundreds = intPart.slice(-3);
-
-let formatted = "";
-if (millions) formatted += millions + "’";
-if (thousands) formatted += thousands + ",";
-formatted += hundreds;
-
-this.value = "$ " + formatted + (decPart !== undefined ? "." + decPart : "");
+/* ════════════════════════════════════════
+   TOUCH SLIDERS (adelante)
+════════════════════════════════════════ */
+document.querySelectorAll('.sthumb').forEach(thumb=>{
+  const track=thumb.parentElement;
+  let startX,drag=false;
+  thumb.addEventListener('touchstart',e=>{
+    drag=true;
+    startX=e.touches[0].clientX;
+    e.stopPropagation();
+  },{passive:true});
+  thumb.addEventListener('touchmove',e=>{
+    if(!drag) return;
+    const max=track.offsetWidth-thumb.offsetWidth;
+    thumb.style.left=Math.max(0,Math.min(e.touches[0].clientX-startX,max))+'px';
+    e.stopPropagation();
+  },{passive:true});
+  thumb.addEventListener('touchend',e=>{
+    const max=track.offsetWidth-thumb.offsetWidth;
+    if(parseInt(thumb.style.left||'0')>max*0.8) nextScreen();
+    thumb.style.left='0';drag=false;
+    e.stopPropagation();
+  });
+  thumb.addEventListener('touchcancel',e=>{
+    thumb.style.left='0';drag=false;
+    e.stopPropagation();
+  });
+  // mouse (Live Server)
+  thumb.addEventListener('mousedown',e=>{drag=true;startX=e.clientX;e.preventDefault()});
+  document.addEventListener('mousemove',e=>{
+    if(!drag) return;
+    const max=track.offsetWidth-thumb.offsetWidth;
+    thumb.style.left=Math.max(0,Math.min(e.clientX-startX,max))+'px';
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!drag) return;
+    const max=track.offsetWidth-thumb.offsetWidth;
+    if(parseInt(thumb.style.left||'0')>max*0.8) nextScreen();
+    thumb.style.left='0';drag=false;
+  });
 });
 
-setTimeout(() => {
-const splash = document.getElementById("splashScreen");
-if (splash) {
-splash.style.transition = "opacity 2.5s ease";
-splash.style.opacity = "0";
-setTimeout(() => splash.remove(), 2500);
-}
-}, 3500);
+/* ════════════════════════════════════════
+   SLIDERS VINCULADOS
+════════════════════════════════════════ */
+const slCons=document.getElementById('slConsumo');
+const slPago=document.getElementById('slPago');
+const dCons =document.getElementById('dConsumo');
+const dPago =document.getElementById('dPago');
+const dTar  =document.getElementById('dTarifa');
 
+function fmtN(n){return Number(n).toLocaleString('es-MX')}
+
+function updConsumoDisplay(){ dCons.innerHTML=fmtN(slCons.value)+' <span>kWh</span>'; }
+function updPagoDisplay(){    dPago.innerHTML='$'+fmtN(slPago.value)+' <span>MXN</span>'; }
+function updTarifaDisplay(){
+  const c=parseInt(slCons.value),p=parseInt(slPago.value);
+  if(c>0) dTar.innerHTML='$'+(p/c).toFixed(2)+'<span style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:3px">/kWh</span>';
+}
+
+slCons.addEventListener('input',()=>{
+  updConsumoDisplay();
+  if(!isLinkingSliders){
+    isLinkingSliders=true;
+    const np=Math.max(100,Math.min(15000,Math.round(parseInt(slCons.value)*TARIFF_REF/50)*50));
+    slPago.value=np; updPagoDisplay();
+    isLinkingSliders=false;
+  }
+  updTarifaDisplay();
+});
+slPago.addEventListener('input',()=>{
+  updPagoDisplay();
+  if(!isLinkingSliders){
+    isLinkingSliders=true;
+    const nc=Math.max(50,Math.min(3000,Math.round(parseInt(slPago.value)/TARIFF_REF/25)*25));
+    slCons.value=nc; updConsumoDisplay();
+    isLinkingSliders=false;
+  }
+  updTarifaDisplay();
 });
 
-function goTo(id) {
-document.querySelectorAll(".screen")
-.forEach(s => s.classList.remove("active"));
-
-document.getElementById(id)
-.classList.add("active");
+/* ════════════════════════════════════════
+   RADIACIÓN
+════════════════════════════════════════ */
+function calcRadiacion(){
+  const c=(document.getElementById('ciudad').value||'').toLowerCase();
+  if(c.includes('durango'))        radiacionSolar=1650;
+  else if(c.includes('chihuahua')) radiacionSolar=1750;
+  else if(c.includes('hermosillo'))radiacionSolar=1850;
+  else if(c.includes('torreon')||c.includes('torreón')) radiacionSolar=1620;
+  else if(c.includes('monterrey')) radiacionSolar=1580;
+  else if(c.includes('culiac'))    radiacionSolar=1700;
+  else if(c.includes('la paz'))    radiacionSolar=1900;
+  else radiacionSolar=1600;
 }
 
-function nextScreen() {
+/* ════════════════════════════════════════
+   CÁLCULO DEL SISTEMA
+════════════════════════════════════════ */
+function calcularSistema(){
+  calcRadiacion();
+  consumoBi  = parseFloat(slCons.value);
+  pagoBi     = parseFloat(slPago.value);
+  consumoMes  = consumoBi/2;
+  consumoAnual= consumoMes*12;
+  costoKWH    = pagoBi/consumoBi;
+  sistemaKW   = consumoMes/150;
 
-if (isTransitioning) return;
+  document.getElementById('aConsM').textContent=consumoMes.toFixed(0);
+  document.getElementById('aConsA').textContent=consumoAnual.toFixed(0);
+  document.getElementById('aSist').textContent =sistemaKW.toFixed(1);
+  document.getElementById('aRad').textContent  =radiacionSolar;
 
-isTransitioning = true;
+  if(consumoAnual<4000)      diagnosticoTexto='Consumo normal';
+  else if(consumoAnual<6000) diagnosticoTexto='Consumo elevado';
+  else                        diagnosticoTexto='Riesgo DAC';
+  document.getElementById('aDiag').textContent=diagnosticoTexto;
 
-const currentId = screens[currentIndex];
-
-if (currentId === "screen-nombre") {
-nombre = document.querySelector("#screen-nombre input").value;
+  renderPanelOpts();
 }
 
-if (currentId === "screen-concepto") {
-concepto = document.querySelector("#screen-concepto input").value;
+/* ════════════════════════════════════════
+   PANEL OPTIONS
+════════════════════════════════════════ */
+function renderPanelOpts(){
+  const cont=document.getElementById('panelOpts');
+  cont.innerHTML='';
+  [550,660,770].forEach(pot=>{
+    const n=Math.ceil((sistemaKW*1000)/pot);
+    const kw=((n*pot)/1000).toFixed(1);
+    const btn=document.createElement('button');
+    btn.className='popt';
+    btn.innerHTML=`<div class="ol">Opción ${pot}W por panel</div>
+      <div class="ov">${n} paneles · ${kw} kWp instalados</div>
+      <div class="os">Toca para seleccionar y cotizar →</div>`;
+    btn.onclick=()=>cotizar(n,pot);
+    cont.appendChild(btn);
+  });
 }
 
-if (currentId === "screen-monto") {
-monto = document.getElementById("montoInput").value;
-document.getElementById("previewNombre").textContent = nombre;
-document.getElementById("previewProyecto").textContent = concepto;
-document.getElementById("previewMonto").textContent = monto;
+/* ════════════════════════════════════════
+   COTIZAR
+════════════════════════════════════════ */
+function generarFolio(){
+  folioCotizacion='CM-EL-'+new Date().getFullYear()+'-'+Date.now().toString().slice(-5);
+  driveFileId='';pdfLinkValue='';
+  if(pdfLinkEl) pdfLinkEl.value='';
+  setDriveStatus('');
 }
 
-if (currentIndex === screens.length - 1) {
-restartFlow();
-return;
+function cotizar(paneles,potencia){
+  generarFolio();
+  catPan=paneles; catPot=potencia;
+  const potSist=paneles*potencia/1000;
+  precioSistema      =potSist*20000;
+  produccionAnual    =potSist*radiacionSolar*EFI;
+  coberturaConsumo   =(produccionAnual/consumoAnual)*100;
+  ahorroMensualGlobal=(produccionAnual/12)*costoKWH;
+  const retorno      =precioSistema/(ahorroMensualGlobal*12);
+  const ap           =potencia===550?2.6:potencia===660?3:3.5;
+  areaSistema        =paneles*ap;
+
+  document.getElementById('cPaneles').textContent=paneles+' paneles '+potencia+'W';
+  document.getElementById('cKwp').textContent    =potSist.toFixed(1)+' kWp instalados';
+  document.getElementById('cInv').textContent    =fmtMoney(precioSistema);
+  document.getElementById('cProd').textContent   =Math.round(produccionAnual/100)*100;
+  document.getElementById('cCob').textContent    =coberturaConsumo.toFixed(0);
+  document.getElementById('cArea').textContent   =areaSistema.toFixed(1);
+  document.getElementById('cAhorro').textContent =fmtMoney(ahorroMensualGlobal);
+  document.getElementById('cRetorno').textContent=Math.round(retorno);
+
+  generarGrafica();
+  nextScreen();
 }
 
-currentIndex++;
-goTo(screens[currentIndex]);
-
-setTimeout(() => {
-isTransitioning = false;
-}, 2500);
-
+/* ════════════════════════════════════════
+   GRÁFICA
+════════════════════════════════════════ */
+function generarGrafica(){
+  if(chartInst){chartInst.destroy();chartInst=null;}
+  const anos=[],ahorro=[],inv=[];
+  for(let i=0;i<=25;i++){
+    const pd=produccionAnual*Math.pow(1-DEG,i);
+    const aa=pd*costoKWH;
+    anos.push(i); ahorro.push((aa*i)-precioSistema); inv.push(precioSistema);
+  }
+  chartInst=new Chart(document.getElementById('grafica'),{
+    type:'line',
+    data:{labels:anos,datasets:[
+      {label:'Ahorro acum.',data:ahorro,borderColor:'#7dffb3',fill:false,pointRadius:0,tension:.3},
+      {label:'Inversión',   data:inv,   borderColor:'rgba(255,255,255,0.3)',fill:false,pointRadius:0,borderDash:[4,4]}
+    ]},
+    options:{responsive:true,
+      plugins:{legend:{labels:{color:'rgba(255,255,255,0.45)',font:{size:10}}}},
+      scales:{
+        x:{ticks:{color:'rgba(255,255,255,0.3)',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},
+        y:{ticks:{color:'rgba(255,255,255,0.3)',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}}
+      }
+    }
+  });
 }
 
-function restartFlow() {
-
-nombre = "";
-concepto = "";
-monto = "";
-
-document.querySelectorAll("input").forEach(i => i.value = "");
-
-currentIndex = 0;
-
-const splash = document.createElement("div");
-splash.id = "splashScreen";
-splash.innerHTML = `
-<div class="logoSplash">
-<img src="assets/img/logo.png">
-</div>
-`;
-
-document.body.appendChild(splash);
-
-setTimeout(() => {
-splash.style.transition = "opacity 2.5s ease";
-splash.style.opacity = "0";
-setTimeout(() => splash.remove(), 2500);
-}, 3500);
-
-goTo("screen-nombre");
-isTransitioning = false;
+/* ════════════════════════════════════════
+   REPORTE
+════════════════════════════════════════ */
+function llenarReporte(){
+  document.getElementById('rFolio').textContent  ='Folio: '+folioCotizacion;
+  document.getElementById('rCliente').textContent=document.getElementById('nombre').value;
+  document.getElementById('rConsumo').textContent='Consumo anual: '+consumoAnual.toFixed(0)+' kWh';
+  document.getElementById('rDiag').textContent   ='Diagnóstico: '+diagnosticoTexto;
+  document.getElementById('rSistema').textContent=document.getElementById('cPaneles').textContent;
+  document.getElementById('rArea').textContent   ='Área requerida: '+areaSistema.toFixed(1)+' m²';
+  document.getElementById('rPrecio').textContent ='Inversión: '+fmtMoney(precioSistema);
+  generarQR();
 }
 
-document.querySelectorAll(".slider-thumb").forEach(thumb => {
+/* ════════════════════════════════════════
+   QR
+════════════════════════════════════════ */
+function generarQR(){
+  const link=(pdfLinkValue||'').trim()||(pdfLinkEl?pdfLinkEl.value.trim():'');
+  const txt=link||'CM-EL\nFolio: '+(folioCotizacion||'')+'\nCliente: '+(document.getElementById('nombre').value||'')+'\nTotal: '+fmtMoney(precioSistema);
+  const qrEl=document.getElementById('qr');
+  qrEl.innerHTML='';
+  try{new QRCode(qrEl,{text:txt,width:120,height:120})}
+  catch(e){try{new QRCode(qrEl,{text:folioCotizacion||'CM-EL',width:120,height:120})}catch(e2){}}
+}
 
-const track = thumb.parentElement;
-const fill = track.querySelector(".slider-fill");
+/* ════════════════════════════════════════
+   CATÁLOGO INTERNO
+════════════════════════════════════════ */
+function calcCatalogo(){
+  const pan=catPan,pot=catPot;
+  if(!pan||!pot) return;
+  const potSist=pan*pot/1000;
+  const c10=Math.ceil(potSist*8);
+  const c8 =Math.ceil(potSist*5);
+  const ct =Math.ceil(potSist*4);
+  const cond=Math.ceil((c8+ct)/3/3);
+  const mc4 =pan*2;
+  const inv =potSist<=10?1:2;
+  const estr=Math.ceil(pan/4);
+  const rie =pan*2;
+  const abr =pan*4;
+  const pern=Math.ceil(rie/1.2);
+  const fus =Math.ceil(pan/9);
+  const comb=fus>1?1:0;
 
-let startX = 0;
-let currentX = 0;
-let dragging = false;
+  document.getElementById('catPan').textContent =pan;
+  document.getElementById('catInv').textContent =inv;
+  document.getElementById('catEstr').textContent=estr;
+  document.getElementById('catC10').textContent =c10;
+  document.getElementById('catC8').textContent  =c8;
+  document.getElementById('catCT').textContent  =ct;
+  document.getElementById('catCond').textContent=cond;
+  document.getElementById('catMC4').textContent =mc4;
+  document.getElementById('catIDC').textContent =fus;
+  document.getElementById('catIAC').textContent =inv;
+  document.getElementById('catFus').textContent =fus*2;
+  document.getElementById('catPern').textContent=pern;
+  document.getElementById('catRiel').textContent=rie;
+  document.getElementById('catAbr').textContent =abr;
+  document.getElementById('catComb').textContent=comb>0?comb:'No aplica';
+  document.getElementById('catFol').textContent ='Folio: '+(folioCotizacion||'—')+'  ·  Sistema: '+potSist.toFixed(1)+' kW  ·  Área: '+areaSistema.toFixed(1)+' m²';
+  document.getElementById('catSub').textContent ='Cliente: '+(document.getElementById('nombre').value||'—')+'  —  uso exclusivo Construye Más.';
+}
+function abrirCatalogo(){ calcCatalogo(); document.getElementById('catModal').classList.add('open'); }
+function cerrarCatalogo(){ document.getElementById('catModal').classList.remove('open'); }
 
-thumb.addEventListener("touchstart", e => {
-dragging = true;
-startX = e.touches[0].clientX;
+/* ════════════════════════════════════════
+   FORMAT UTILS
+════════════════════════════════════════ */
+function fmtMoney(v){
+  const n=Number(v||0),s=n<0?'-':'',a=Math.abs(n);
+  let ip=Math.floor(a),dec=Math.round((a-ip)*100);
+  if(dec===100){ip++;dec=0;}
+  let str=ip.toString(),gs=[];
+  while(str.length>3){gs.unshift(str.slice(-3));str=str.slice(0,-3);}
+  gs.unshift(str);
+  let fmt=gs.join(',');
+  if(gs.length>2){const i=fmt.indexOf(',');fmt=fmt.slice(0,i)+"'"+fmt.slice(i+1);}
+  return s+'$'+fmt+'.'+dec.toString().padStart(2,'0');
+}
+function numLetra(n){
+  n=Math.floor(Number(n||0));
+  if(n===0) return 'cero';
+  if(n<0) return 'menos '+numLetra(Math.abs(n));
+  let w='';
+  const mil=Math.floor(n/1000000),miles=Math.floor((n%1000000)/1000),ciens=n%1000;
+  if(mil>0){w+=(mil===1?'un millon':sec(mil)+' millones');}
+  if(miles>0){if(w)w+=' ';w+=(miles===1?'mil':sec(miles)+' mil');}
+  if(ciens>0){if(w)w+=' ';w+=sec(ciens);}
+  return w;
+}
+function sec(n){return cens(n);}
+function cens(n){
+  if(n===0) return '';if(n===100) return 'cien';
+  const ca=['','ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+  const c=Math.floor(n/100),r=n%100;
+  let t=ca[c];if(r>0)t+=(t?' ':'')+decs(r);return t;
+}
+function decs(n){
+  if(n<10) return unis(n);
+  if(n<20){const e=['diez','once','doce','trece','catorce','quince','dieciseis','diecisiete','dieciocho','diecinueve'];return e[n-10];}
+  if(n<30){if(n===20)return 'veinte';return 'veinti'+unis(n-20);}
+  const ta=['','','veinte','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
+  const t=Math.floor(n/10),u=n%10;let tx=ta[t];if(u>0)tx+=' y '+unis(u);return tx;
+}
+function unis(n){const u=['','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve'];return u[n];}
+function montoLetra(v){
+  const n=Number(v||0),ip=Math.floor(Math.abs(n));
+  let dec=Math.round((Math.abs(n)-ip)*100);if(dec===100)dec=0;
+  let l=numLetra(ip)||'cero';l=l.charAt(0).toUpperCase()+l.slice(1);
+  return '(Son: '+l+' de pesos '+dec.toString().padStart(2,'0')+'/100 M.N.)';
+}
+function fmtFecha(dt){
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const mes=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return dias[dt.getDay()].charAt(0).toUpperCase()+dias[dt.getDay()].slice(1)+', '+dt.getDate()+' de '+mes[dt.getMonth()]+' de '+dt.getFullYear()+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0')+' hrs.';
+}
+
+/* ════════════════════════════════════════
+   DRIVE
+════════════════════════════════════════ */
+function initDrive(){
+  if(!window.google||!google.accounts||!google.accounts.oauth2||driveTokenClient) return;
+  driveTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:DRIVE_CLIENT_ID,scope:DRIVE_SCOPES,
+    callback:r=>{if(r&&r.access_token)driveAccessToken=r.access_token;}
+  });
+}
+function ensureToken(){
+  return new Promise((res,rej)=>{
+    if(driveAccessToken) return res(driveAccessToken);
+    if(!window.google||!google.accounts||!google.accounts.oauth2) return rej(new Error('GIS no cargado'));
+    initDrive();
+    if(!driveTokenClient) return rej(new Error('Token client no inicializado'));
+    driveTokenClient.callback=r=>{if(r.error)rej(r);else{driveAccessToken=r.access_token;res(driveAccessToken);}};
+    driveTokenClient.requestAccessToken({prompt:'consent'});
+  });
+}
+async function createFile(name){
+  const t=await ensureToken();
+  const r=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({name,mimeType:'application/pdf',parents:[DRIVE_FOLDER_ID]})});
+  if(!r.ok) throw new Error('createFile failed');
+  return (await r.json()).id;
+}
+async function uploadFile(id,blob){
+  const t=await ensureToken();
+  const r=await fetch('https://www.googleapis.com/upload/drive/v3/files/'+id+'?uploadType=media',{method:'PATCH',headers:{Authorization:'Bearer '+t,'Content-Type':'application/pdf'},body:blob});
+  if(!r.ok) throw new Error('upload failed');
+}
+async function makePublic(id){
+  const t=await ensureToken();
+  await fetch('https://www.googleapis.com/drive/v3/files/'+id+'/permissions',{method:'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({role:'reader',type:'anyone'})});
+}
+function driveLink(id){return 'https://drive.google.com/file/d/'+id+'/view?usp=sharing';}
+function setDriveStatus(msg,err){
+  if(!driveStatusEl) return;
+  driveStatusEl.textContent=msg||'';
+  driveStatusEl.style.color=err?'#ffb3b3':'#bdf5c8';
+}
+function copiarLink(){
+  const link=(pdfLinkValue||'').trim()||(pdfLinkEl?(pdfLinkEl.value||'').trim():'');
+  if(!link){setDriveStatus('No hay link para copiar.',true);return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(()=>setDriveStatus('Link copiado.',false)).catch(()=>setDriveStatus('No se pudo copiar.',true));}
+  else if(pdfLinkEl){pdfLinkEl.focus();pdfLinkEl.select();try{document.execCommand('copy');setDriveStatus('Link copiado.',false);}catch(e){setDriveStatus('No se pudo copiar.',true);}}
+}
+async function ensureDriveLink(blob,fileName){
+  try{
+    if(!window.google||!google.accounts||!google.accounts.oauth2){setDriveStatus('Google no disponible.',true);return null;}
+    setDriveStatus('Guardando en Drive...',false);
+    if(!driveFileId) driveFileId=await createFile(fileName);
+    if(blob) await uploadFile(driveFileId,blob);
+    await makePublic(driveFileId);
+    const link=driveLink(driveFileId);
+    pdfLinkValue=link;if(pdfLinkEl)pdfLinkEl.value=link;
+    setDriveStatus('✓ Guardado en Drive.',false);
+    if(SCREENS[idx]==='reporte') generarQR();
+    return link;
+  }catch(e){console.warn('Drive:',e);setDriveStatus('No se pudo guardar en Drive.',true);return null;}
+}
+
+/* ════════════════════════════════════════
+   PDF
+════════════════════════════════════════ */
+function preloadTmpl(){
+  if(pdfTmplData||pdfTmplLoading) return;
+  pdfTmplLoading=loadImg(PDF_TEMPLATE_URL).then(d=>{pdfTmplData=d||null;}).catch(()=>null).finally(()=>{if(!pdfTmplData)pdfTmplLoading=null;});
+}
+async function loadImg(url){
+  try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)return null;const b=await r.blob();return await new Promise(res=>{const rd=new FileReader();rd.onload=()=>res(rd.result);rd.onerror=()=>res(null);rd.readAsDataURL(b);});}catch(e){return null;}
+}
+function pdfTxt(doc,text,x,y,opts){
+  if(!text) return;
+  let sz=10,al='left';if(opts){if(opts.size)sz=opts.size;if(opts.align)al=opts.align;}
+  doc.setFontSize(sz);doc.text(String(text),x,y,{align:al});
+}
+function pdfBlock(doc,lbl,val,x,y,lh){
+  if(!lbl) return;
+  doc.setFont('helvetica','bold');doc.setFontSize(11.5);doc.setTextColor(20,20,20);
+  doc.text(String(lbl),x,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.setTextColor(0,102,204);
+  doc.text(String(val),x,y+lh-1);
+}
+function canvasWhite(cv){
+  try{const t=document.createElement('canvas');t.width=cv.width;t.height=cv.height;const c=t.getContext('2d');c.fillStyle='#FFF';c.fillRect(0,0,t.width,t.height);c.drawImage(cv,0,0);return t.toDataURL('image/png');}catch(e){return null;}
+}
+function saveBlob(blob,name){
+  if(!blob) return;
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=name.trim();a.style.display='none';a.rel='noopener';
+  document.body.appendChild(a);
+  if(typeof a.download==='undefined')window.open(url,'_blank');else a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},0);
+}
+
+async function generarPDF(){
+  if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF no cargó.');return;}
+  const {jsPDF}=window.jspdf;
+  generarQR();
+  const doc=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
+  if(pdfTmplData) doc.addImage(pdfTmplData,'PNG',0,0,PDF_PAGE.w,PDF_PAGE.h);
+  doc.setTextColor(20,20,20);
+
+  const folio=folioCotizacion||'';
+  const monto=fmtMoney(precioSistema);
+  const mLetra=montoLetra(precioSistema).toUpperCase();
+  const fHora=fmtFecha(new Date());
+  const prodR=Math.round((produccionAnual||0)/100)*100;
+  const ret=precioSistema&&ahorroMensualGlobal?Math.round(precioSistema/(ahorroMensualGlobal*12)):0;
+
+  doc.setFont('helvetica','bold');doc.setTextColor(0,102,204);
+  pdfTxt(doc,folio, PDF_LAYOUT.idTexto.x,   PDF_LAYOUT.idTexto.y,   PDF_LAYOUT.idTexto);
+  pdfTxt(doc,fHora, PDF_LAYOUT.fechaHora.x, PDF_LAYOUT.fechaHora.y, PDF_LAYOUT.fechaHora);
+  pdfTxt(doc,monto, PDF_LAYOUT.monto.x,     PDF_LAYOUT.monto.y,     PDF_LAYOUT.monto);
+  doc.setFont('helvetica','normal');doc.setTextColor(20,20,20);
+  pdfTxt(doc,mLetra,PDF_LAYOUT.montoTexto.x,PDF_LAYOUT.montoTexto.y,PDF_LAYOUT.montoTexto);
+  doc.setFont('helvetica','bold');doc.setTextColor(0,102,204);
+  pdfTxt(doc,folio, PDF_LAYOUT.folioAut.x,  PDF_LAYOUT.folioAut.y,  PDF_LAYOUT.folioAut);
+  doc.setFont('helvetica','normal');doc.setTextColor(20,20,20);
+
+  const nom=document.getElementById('nombre').value||'';
+  const tel=document.getElementById('telefono').value||'';
+  const cal=(document.getElementById('calle').value||'')+' '+(document.getElementById('numero').value||'');
+  const col=document.getElementById('colonia').value||'';
+  const cpv=document.getElementById('cp').value||'';
+  const ciu=document.getElementById('ciudad').value||'';
+  const c1=[
+    {l:'CLIENTE:',v:nom},{l:'TELÉFONO:',v:tel},{l:'CALLE:',v:cal},
+    {l:'COLONIA:',v:col},{l:'C.P.:',v:cpv},{l:'CIUDAD:',v:ciu},
+    {l:'CONSUMO BIMESTRAL:',v:Number(consumoBi||0).toFixed(0)+' kWh'},
+    {l:'PAGO BIMESTRAL:',v:fmtMoney(pagoBi)}
+  ];
+  const c2=[
+    {l:'CONSUMO ANUAL:',v:Number(consumoAnual||0).toFixed(0)+' kWh'},
+    {l:'RADIACIÓN:',v:(radiacionSolar||0)+' kWh/kW/año'},
+    {l:'DIAGNÓSTICO:',v:diagnosticoTexto||''},
+    {l:'SISTEMA:',v:Number(sistemaKW||0).toFixed(1)+' kW'},
+    {l:'PANELES:',v:document.getElementById('cPaneles')?document.getElementById('cPaneles').textContent:''},
+    {l:'PRODUCCIÓN ANUAL:',v:prodR+' kWh'},
+    {l:'COBERTURA:',v:Number(coberturaConsumo||0).toFixed(0)+'%'},
+    {l:'ÁREA:',v:Number(areaSistema||0).toFixed(1)+' m²'},
+    {l:'AHORRO MENSUAL:',v:fmtMoney(ahorroMensualGlobal)},
+    {l:'PUNTO DE EQUILIBRIO:',v:ret+' años'}
+  ];
+  let cy=PDF_REP.startY;
+  c1.forEach(it=>{pdfBlock(doc,it.l.toUpperCase(),String(it.v).toUpperCase(),PDF_REP.col1X,cy,PDF_REP.lh);cy+=PDF_REP.lh*1.6;});
+  let cy2=PDF_REP.startY;
+  c2.forEach(it=>{pdfBlock(doc,it.l.toUpperCase(),String(it.v).toUpperCase(),PDF_REP.col2X,cy2,PDF_REP.lh);cy2+=PDF_REP.lh*1.6;});
+
+  const qrCv=document.querySelector('#qr canvas');
+  if(qrCv){
+    const qrImg=qrCv.toDataURL('image/png');
+    doc.setFillColor(255,255,255);doc.rect(PDF_LAYOUT.qr.x,PDF_LAYOUT.qr.y,PDF_LAYOUT.qr.size,PDF_LAYOUT.qr.size,'F');
+    doc.addImage(qrImg,'PNG',PDF_LAYOUT.qr.x,PDF_LAYOUT.qr.y,PDF_LAYOUT.qr.size,PDF_LAYOUT.qr.size);
+    const gCv=document.getElementById('grafica');
+    if(gCv){const gi=canvasWhite(gCv)||gCv.toDataURL('image/png');if(gi){const cW=60,r=gCv.height&&gCv.width?(gCv.height/gCv.width):0.5;const cH=cW*r,cX=PDF_LAYOUT.qr.x+PDF_LAYOUT.qr.size+10,cY=PDF_LAYOUT.qr.y+(PDF_LAYOUT.qr.size-cH)/2;doc.addImage(gi,'PNG',Math.min(cX,PDF_PAGE.w-10-cW),cY,cW,cH);}}
+  }
+
+  let blob=null;try{blob=doc.output('blob');}catch(e){console.warn(e);}
+  const fn='cotizacion-'+(folioCotizacion||'sin-folio')+'.pdf';
+  if(blob){saveBlob(blob,fn);await ensureDriveLink(blob,fn);}else doc.save(fn);
+}
+
+/* ════════════════════════════════════════
+   WHATSAPP
+════════════════════════════════════════ */
+async function enviarWhatsApp(){
+  await generarPDF();
+  let tel=(document.getElementById('telefono').value||'').replace(/\D/g,'');
+  if(!tel){alert('Escribe el teléfono del cliente.');return;}
+  if(tel.length===10) tel='52'+tel;
+  const link=(pdfLinkValue||'').trim()||(pdfLinkEl?(pdfLinkEl.value||'').trim():'');
+  let msg='*Construye Más. — Energías Limpias*\nFolio: '+folioCotizacion+'\n'+
+    (document.getElementById('cPaneles')?document.getElementById('cPaneles').textContent:'')+'\n'+
+    fmtMoney(precioSistema)+'\nPDF disponible para adjuntar.';
+  if(link) msg+='\n'+link;
+  window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  preloadTmpl();
+  pdfLinkEl    =document.getElementById('pdfLink');
+  driveStatusEl=document.getElementById('driveStatus');
+  if(pdfLinkEl&&pdfLinkValue) pdfLinkEl.value=pdfLinkValue;
+  if(pdfLinkEl) pdfLinkEl.addEventListener('input',()=>{if(SCREENS[idx]==='reporte') generarQR();});
+  initDrive();
+  updConsumoDisplay(); updPagoDisplay(); updTarifaDisplay();
 });
-
-thumb.addEventListener("touchmove", e => {
-
-if (!dragging) return;
-
-const max = track.offsetWidth - thumb.offsetWidth;
-
-currentX = Math.max(
-0,
-Math.min(e.touches[0].clientX - startX, max)
-);
-
-thumb.style.left = currentX + "px";
-
-if (fill) {
-fill.style.width = (currentX / max) * 100 + "%";
-}
-
-});
-
-thumb.addEventListener("touchend", () => {
-
-const max = track.offsetWidth - thumb.offsetWidth;
-
-if (currentX > max * 0.85) {
-
-thumb.style.left = max + "px";
-if (fill) fill.style.width = "100%";
-
-nextScreen();
-
-setTimeout(() => {
-thumb.style.left = "0px";
-if (fill) fill.style.width = "0%";
-}, 2500);
-
-} else {
-
-thumb.style.left = "0px";
-if (fill) fill.style.width = "0%";
-}
-
-dragging = false;
-currentX = 0;
-
-});
-
-});
-
+setTimeout(()=>nextScreen(),2000);
 </script>
-
 </body>
 </html>
